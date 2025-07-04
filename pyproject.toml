@@ -1,0 +1,35 @@
+[project]
+name = "dataexplorer"
+version = "0.1.0beta"
+dependencies = [
+    "pandas>=2.2",
+    "toml",
+    "PySide6>=6.9",
+    "superqt",
+    "python-calamine>=0.2",
+    "openpyxl>=3.1",
+    "seaborn>=0.13.2",
+    "matplotlib>=3.9.2",
+    "PySideSix-Frameless-Window>=0.7",
+    "importlib",
+]
+requires-python = ">=3.12"
+
+[tool.setuptools.package-dir]
+dataexplorer = "dataexplorer"
+
+[tool.setuptools.package-data]
+"dataexplorer" = ["*.ico"]
+
+[project.scripts]
+dataexplorer = "dataexplorer.dataexplorer:run"
+
+[tool.pyrefly]
+project_includes = ["**/*"]
+project_excludes = [
+    "**/.[!/.]*",
+    "**/*venv/**/*",
+]
+
+[tool.pyrefly.errors]
+implicitly-defined-attribute = false

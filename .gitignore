@@ -1,0 +1,6 @@
+Logs/
+dataexplorer.egg-info/
+dist/
+build/
+.ruff_cache/
+**/__pycache__/
