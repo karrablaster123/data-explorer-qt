@@ -1,6 +1,9 @@
 [project]
 name = "dataexplorer"
 version = "0.1.0beta"
+authors = [
+    {name="Uddhava Swaminathan", email="karrablaster123@proton.me"}
+]
 dependencies = [
     "pandas>=2.2",
     "toml",
@@ -13,7 +16,13 @@ dependencies = [
     "PySideSix-Frameless-Window>=0.7",
     "importlib",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.11"
+readme="README.md"
+license = "Apache-2.0"
+
+[project.urls]
+Homepage = "https://github.com/karrablaster123/data-explorer-qt"
+Issues = "https://github.com/karrablaster123/data-explorer-qt/issues"
 
 [tool.setuptools.package-dir]
 dataexplorer = "dataexplorer"
