@@ -9,4 +9,9 @@ The app aims to be extensible by plugins - see plugins/basic_plugin.py - however
 git clone --depth=1 https://github.com/karrablaster123/dataexplorer.git
 pip install -e . OR pip install .
 dataexplorer
+
+OR 
+
+pip install data-explorer-qt
+dataexplorer
 ```
