@@ -1,5 +1,5 @@
 Logs/
-dataexplorer.egg-info/
+data_explorer_qt.egg-info/
 dist/
 build/
 .ruff_cache/
