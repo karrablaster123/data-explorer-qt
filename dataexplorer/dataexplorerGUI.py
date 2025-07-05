@@ -1,4 +1,4 @@
-# pyright: reportUninitializedInstanceVariable=false, reportAny=false, reportUnknownMemberType=false, reportMissingTypeStubs=false
+# pyright: reportUninitializedInstanceVariable=false, reportUnknownMemberType=false, reportMissingTypeStubs=false
 
 from functools import partial
 from pathlib import Path
@@ -29,7 +29,7 @@ import typing
 
 from .data.datamodel import DataModel, FilterGUI, NumCatGUI
 from .data.tableGUI import TableViewer
-from .guihelper import CustomTitleBar, build_grid_layout, build_layout
+from .guihelper import CustomTitleBar, build_grid_layout, build_layout, get_label_widget_row
 # from novaquery import NovadataQuery
 
 from .data.importexportGUI import DataImporter, export_data
@@ -91,8 +91,8 @@ class DataExplorerGUI(FramelessMainWindow):
         self.main_layout.addWidget(self.sidebar)
         self.main_layout.addWidget(self.content_area_container, 1)
 
-        self.current_theme = self.config["Themes"]["default"]
-        self.apply_theme()
+        self.current_theme = self.config["General"]["default_theme"].casefold()
+        self.set_theme()
         self.write_to_status_bar("Initialisation complete!")
 
     def _generate_sidebar(self):
@@ -134,10 +134,16 @@ class DataExplorerGUI(FramelessMainWindow):
         _ = self.nav_button4.clicked.connect(f)
         idx += 1
 
-        self.nav_button5 = QPushButton("Plot Default Settings")
+        self.nav_button5 = QPushButton("Plot Settings")
         self.nav_button5.setCheckable(True)
         f = partial(self.switch_content_page, index=idx)
         _ = self.nav_button5.clicked.connect(f)
+        idx += 1
+
+        self.nav_button6 = QPushButton("App Settings")
+        self.nav_button6.setCheckable(True)
+        f = partial(self.switch_content_page, index=idx)
+        _ = self.nav_button6.clicked.connect(f)
         idx += 1
 
         self.sidebar_nav_buttons = [
@@ -146,6 +152,7 @@ class DataExplorerGUI(FramelessMainWindow):
             self.nav_button3,
             self.nav_button4,
             self.nav_button5,
+            self.nav_button6,
         ]
 
         for btn_name in self.plugin_button_names:
@@ -181,6 +188,9 @@ class DataExplorerGUI(FramelessMainWindow):
 
         # Page 5: Plot Settings
         self.pages.append(self.plot_settings_page())
+
+        # Page 6: App Settings
+        self.pages.append(self.app_settings_page())
 
         self.pages.extend(self.load_plugin_pages())
 
@@ -341,8 +351,6 @@ class DataExplorerGUI(FramelessMainWindow):
         _ = histogram_button.clicked.connect(
             lambda: self.dataexplorer.plotter.histogram_plotter()
         )
-        other_1d_plots = QPushButton("Other 1D Plots")
-        _ = other_1d_plots.clicked.connect(lambda: self._not_implemented())
 
         scatter_plot_button = QPushButton("Scatter")
         _ = scatter_plot_button.clicked.connect(
@@ -366,16 +374,13 @@ class DataExplorerGUI(FramelessMainWindow):
         _ = correl_matrix.clicked.connect(
             lambda: self.dataexplorer.plotter.correlmatrix_plotter()
         )
-        plot_3d_button = QPushButton("3D Plots")
-        _ = plot_3d_button.clicked.connect(lambda: self._not_implemented())
 
         build_grid_layout(
             plotting_page_layout,
             [
-                [histogram_button, other_1d_plots],
-                [scatter_plot_button, line_plot_button],
-                [categorical_plot_button, count_plot_button],
-                [correl_matrix, plot_3d_button],
+                [histogram_button, scatter_plot_button],
+                [line_plot_button, categorical_plot_button],
+                [count_plot_button, correl_matrix],
             ],
         )
 
@@ -387,6 +392,18 @@ class DataExplorerGUI(FramelessMainWindow):
         plot_settings_page = self.dataexplorer.get_widget()
         self.plot_settings_layout = QVBoxLayout(plot_settings_page)
         return plot_settings_page
+    
+    def app_settings_page(self) -> QWidget:
+        app_settings_page = self.dataexplorer.get_widget()
+        app_settings_layout = QVBoxLayout(app_settings_page)
+        self.theme_combobox = QComboBox()
+        self.theme_combobox.addItems(self.config["Themes"].keys())
+        _ = self.theme_combobox.currentTextChanged.connect(self.set_theme)
+        theme_combobox = get_label_widget_row("Theme", self.theme_combobox)
+        build_layout(app_settings_layout,
+                     [theme_combobox])
+        app_settings_layout.addStretch()
+        return app_settings_page
 
     def write_to_status_bar(self, message: str):
         if self.clear_message_timeout is not None:
@@ -399,23 +416,13 @@ class DataExplorerGUI(FramelessMainWindow):
         self.QStatusBar.clearMessage()
         self.clear_message_timeout = None
 
-    def apply_theme(self):
-        if self.current_theme == "dark":
-            self.setStyleSheet(self.config["Themes"]["Dark"])
-            self.dataexplorer.stylesheet = self.config["Themes"]["Dark"]
-        else:
-            self.setStyleSheet(self.config["Themes"]["Light"])
-            self.dataexplorer.stylesheet = self.config["Themes"]["Light"]
-        # self.style().unpolish(self)
-        # self.style().polish(self)
-        self.update()
-
-    # def toggle_theme(self):
-    #     if self.current_theme == "dark":
-    #         self.current_theme = "light"
-    #     else:
-    #         self.current_theme = "dark"
-    #     self.apply_theme()
+    def set_theme(self):
+        self.current_theme = self.theme_combobox.currentText()
+        for theme_name in self.config["Themes"].keys():
+            if self.current_theme.casefold() == theme_name.casefold():
+                self.dataexplorer.stylesheet = self.config["Themes"][theme_name]
+                self.setStyleSheet(self.dataexplorer.stylesheet)
+                break
 
     def load_plugin_pages(self) -> list[QWidget]:
         plugin_loaders = self.dataexplorer.plugin_list

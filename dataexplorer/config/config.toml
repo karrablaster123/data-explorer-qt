@@ -2,8 +2,9 @@
 
 window_dimensions = [1280, 800] # W, H
 font = "Segoe UI"
+default_theme = "dark"
 fontsize = 12
-plugins = "__NOTIMPLEMENTED__"
+plugins = "__PLUGIN_FOLDER_PATH__" # defaults to _root_folder_/plugins
 
 
 ["File Types"]
@@ -28,8 +29,6 @@ grid_max_col = 3
 log_format = "%(asctime)s - %(levelname)s - %(message)s"
 
 [Themes]
-
-default = "dark"
 
 # --- AI-Generated ---
 
@@ -458,16 +457,6 @@ ContentArea = """
         background-color: #005F6B; /* Even darker when pressed */
     }
 
-"""
-
-Taglist = """
-    #Taglist {
-        background-color: #2b2b2b; /* General background color for all widgets */
-        color: #f0f0f0;            /* General text color for all widgets */
-        selection-background-color: #555555; /* Default selection background */
-        selection-color: #f0f0f0;           /* Default selection text color */
-        border: none; /* By default, remove borders from generic widgets */
-    }
 """
 
 TableViewer = """
