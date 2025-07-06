@@ -46,10 +46,9 @@ class DataExplorer:
     def _setup_logging(self):
         # Parent of this file is the upper directory
         # Parent of that is the upper directory
-        log_folder = Path(__file__).parent.parent / "Logs"
-
-        if not log_folder.exists():
-            log_folder.mkdir(parents=True)
+        log_folder = Path.home() / ".data-explorer-qt" / "Logs"
+        
+        log_folder.mkdir(parents=True, exist_ok=True)
 
         log_file_number = 1
         log_file_path = log_folder / "Log.log"
