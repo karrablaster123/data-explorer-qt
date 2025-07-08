@@ -30,7 +30,6 @@ import typing
 from .data.datamodel import DataModel, FilterGUI, NumCatGUI
 from .data.tableGUI import TableViewer
 from .guihelper import CustomTitleBar, build_grid_layout, build_layout, get_label_widget_row
-# from novaquery import NovadataQuery
 
 from .data.importexportGUI import DataImporter, export_data
 
