@@ -1,4 +1,3 @@
-from dataexplorer.dataexplorer import run
-import sys
+from .data_explorer_qt.dataexplorer import run
 
-run(sys.argv)
+run()
