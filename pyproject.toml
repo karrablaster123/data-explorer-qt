@@ -24,10 +24,10 @@ Homepage = "https://github.com/karrablaster123/data-explorer-qt"
 Issues = "https://github.com/karrablaster123/data-explorer-qt/issues"
 
 [tool.setuptools.package-dir]
-dataexplorer = "data_explorer_qt"
+"data_explorer_qt" = "data_explorer_qt"
 
 [project.scripts]
-dataexplorer = "dataexplorer.dataexplorer:run"
+dataexplorer = "data_explorer_qt.dataexplorer:run"
 
 [tool.setuptools.package-data]
 "*" = ["**"]

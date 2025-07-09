@@ -451,8 +451,8 @@ class HistDialog(PlottingDialog):
         build_layout_with_callbacks(
             self._layout,
             [
-                [hist_column_combobox, y_column_combobox, hue_column_combobox],
-                [col_column_combobox, row_column_combobox],
+                [hist_column_combobox, y_column_combobox],
+                [hue_column_combobox, col_column_combobox, row_column_combobox],
                 [self.log_y_checkbox, self.log_x_checkbox],
                 [collapsible],
                 [plot_button, dynamic_plot_button],

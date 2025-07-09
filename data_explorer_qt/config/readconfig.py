@@ -1,4 +1,3 @@
-# pyright: reportAny=false, reportExplicitAny=false
 from typing import Any
 import toml
 from pathlib import Path

@@ -63,6 +63,7 @@ def get_dynamic_scroll_area(
     widget: QWidget | Callable[[], QWidget], width: int | None = None
 ) -> tuple[QScrollArea, QWidget]:
     scroll_area = QScrollArea()
+    scroll_area.setObjectName("ScrollArea")
     scroll_area.setWidgetResizable(True)
     if callable(widget):
         widget = widget()
@@ -70,6 +71,7 @@ def get_dynamic_scroll_area(
     if width:
         height = widget.height()
         widget.resize(width, height)
+    widget.setObjectName("ScrollAreaWidget")
     return (scroll_area, widget)
 
 

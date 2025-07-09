@@ -203,6 +203,7 @@ class PlottingDialog(QWidget):
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore", name: str):
         super().__init__()
+        self.setObjectName("StandardWidget")
         self.setWindowTitle(f"{name} Plotting Dialog")
         self.dataexplorer: "DataExplorer" = dataexplorer
         self.debug: Callable[[str], None] = dataexplorer.debug

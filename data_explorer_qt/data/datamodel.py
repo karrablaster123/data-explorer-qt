@@ -95,6 +95,7 @@ class DataStore:
                 if not filterstore.active:
                     continue
                 starting_length = len(self.filtered_data)
+                self.debug(filterstore)
                 self.filtered_data = apply_filter(
                     self.filtered_data, column, filterstore
                 )
@@ -487,13 +488,13 @@ def apply_filter(
                 data = data[data[column].isin(filterstore.filter_value)]
         case Dtype.NUMERIC:
             data = data[
-                (data[column].values > filterstore.filter_value[0])
-                & (data[column].values < filterstore.filter_value[1])
+                (data[column].values >= filterstore.filter_value[0])
+                & (data[column].values <= filterstore.filter_value[1])
             ]
         case Dtype.DATETIME:
             data = data[
-                (data[column].values > filterstore.filter_value[0])
-                & (data[column].values < filterstore.filter_value[1])
+                (data[column].values >= filterstore.filter_value[0])
+                & (data[column].values <= filterstore.filter_value[1])
             ]
     assert isinstance(data, pd.DataFrame)
     return data

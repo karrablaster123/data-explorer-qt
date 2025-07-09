@@ -1,4 +1,4 @@
-# pyright: reportAny=false, reportUnknownVariableType=false, reportUninitializedInstanceVariable=false
+# pyright: reportUnknownVariableType=false, reportUninitializedInstanceVariable=false
 from collections.abc import Iterable
 import typing
 from pathlib import Path
@@ -20,14 +20,14 @@ from PySide6.QtCore import (
 )
 import pandas as pd
 
-from dataexplorer.data.dataenums import (
+from .dataenums import (
     NAN_CAT,
     NAN_DATETIME,
     NAN_NUM,
     VALID_DTYPES,
     NaNOperation,
 )
-from ..guihelper import build_layout
+from ..guihelper import build_layout, get_label_widget_row
 from ..guihelper import get_dynamic_scroll_area
 from .datamodel import (
     DataModel,
@@ -166,8 +166,6 @@ class DataImporter:
 
         for i, column in enumerate(self.data.columns):
             try:
-                hbox = QHBoxLayout()
-                label = QLabel(f"{column}:")
                 if numeric_comparator(self.data[column]):
                     widg = self.dtype_widgets[column] = QComboBox()
                     widg.addItems(VALID_DTYPES)
@@ -186,7 +184,7 @@ class DataImporter:
                     return
                 function = partial(self._dtype_setter, column=column)  # pyright: ignore[reportUnkownMemberType]
                 _ = widg.currentTextChanged.connect(function)
-                build_layout(hbox, [label, widg])
+                hbox = get_label_widget_row(f"{column}:", widg)
                 dtype_grid.addLayout(hbox, self._row(i), self._col(i))
                 self.debug(
                     f'Dtype, Row, Col: "{widg.currentText()}", {self._row(i)}, {self._col(i)}'
@@ -247,8 +245,6 @@ class DataImporter:
 
         for i, column in enumerate(nan_columns):
             try:
-                hbox = QHBoxLayout()
-                label = QLabel(f"{column}:")
                 self.debug(f"{column}: {self.data[column].dtype}")
                 if numeric_comparator(self.data[column]):
                     widg = self.nan_widgets[column] = QComboBox()
@@ -266,7 +262,7 @@ class DataImporter:
                     self.error(f"Invalid dtype seen {column}.")
                     self._close_widget(self._nan_widget)
                     return
-                build_layout(hbox, [label, widg])
+                hbox = get_label_widget_row(f"{column}:", widg)
                 nan_grid.addLayout(hbox, self._row(i), self._col(i))
                 self.debug(
                     f'NaN, Row, Col: "{widg.currentText()}", {self._row(i)}, {self._col(i)}'

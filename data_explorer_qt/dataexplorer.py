@@ -47,7 +47,7 @@ class DataExplorer:
         # Parent of this file is the upper directory
         # Parent of that is the upper directory
         log_folder = Path.home() / ".data-explorer-qt" / "Logs"
-        
+
         log_folder.mkdir(parents=True, exist_ok=True)
 
         log_file_number = 1
@@ -125,14 +125,16 @@ class DataExplorer:
 
     def get_widget(self) -> QWidget:
         widget = QWidget()
+        widget.setObjectName("StandardWidget")
         widget.setStyleSheet(self.stylesheet)
         return widget
 
 
-def run(argv: list[str] | None = None):
+def run():
     try:
         app = QApplication([])
         app.setAttribute(Qt.ApplicationAttribute.AA_DontCreateNativeWidgetSiblings)
+        argv = sys.argv
         _ = app.setStyle("Fusion")
         debug_mode = False
         if argv is None:

@@ -29,7 +29,12 @@ import typing
 
 from .data.datamodel import DataModel, FilterGUI, NumCatGUI
 from .data.tableGUI import TableViewer
-from .guihelper import CustomTitleBar, build_grid_layout, build_layout, get_label_widget_row
+from .guihelper import (
+    CustomTitleBar,
+    build_grid_layout,
+    build_layout,
+    get_label_widget_row,
+)
 
 from .data.importexportGUI import DataImporter, export_data
 
@@ -108,7 +113,7 @@ class DataExplorerGUI(FramelessMainWindow):
         idx: int = 0
 
         # Navigation Buttons
-        self.nav_button1 = QPushButton("Import/Export Data")
+        self.nav_button1 = QPushButton("Manage Data")
         self.nav_button1.setCheckable(True)  # Allows it to stay "pressed"
         self.nav_button1.setChecked(True)  # Default selected
         f = partial(self.switch_content_page, index=idx)
@@ -206,6 +211,7 @@ class DataExplorerGUI(FramelessMainWindow):
     def _manage_data_page(self) -> QWidget:
         manage_data_page = self.dataexplorer.get_widget()
         manage_data_page_layout = QVBoxLayout(manage_data_page)
+        manage_data_page.setObjectName("ContentArea")
 
         top_spacer = QSpacerItem(
             10, 30, QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed
@@ -326,6 +332,7 @@ class DataExplorerGUI(FramelessMainWindow):
 
     def add_filter_GUI_to_page(self, filterGUI: FilterGUI, name: str):
         self.filter_data_page_layout.addWidget(filterGUI.filter_page)
+        filterGUI.filter_page.setObjectName("ContentArea")
         self.filter_pages[name] = filterGUI.filter_page
         self.filter_pages[name].setVisible(False)
 
@@ -339,11 +346,13 @@ class DataExplorerGUI(FramelessMainWindow):
 
     def add_num_cat_GUI_to_page(self, numCatGUI: NumCatGUI, name: str):
         self.num_to_cat_page_layout.addWidget(numCatGUI.num_to_cat_page)
+        numCatGUI.num_to_cat_page.setObjectName("ContentArea")
         self.num_to_cat_pages[name] = numCatGUI.num_to_cat_page
         self.num_to_cat_pages[name].setVisible(True)
 
     def _plotting_page(self) -> QWidget:
         plotting_page = self.dataexplorer.get_widget()
+        plotting_page.setObjectName("ContentArea")
         plotting_page_layout = QVBoxLayout(plotting_page)
 
         histogram_button = QPushButton("Histogram")
@@ -389,18 +398,19 @@ class DataExplorerGUI(FramelessMainWindow):
 
     def plot_settings_page(self) -> QWidget:
         plot_settings_page = self.dataexplorer.get_widget()
+        plot_settings_page.setObjectName("ContentArea")
         self.plot_settings_layout = QVBoxLayout(plot_settings_page)
         return plot_settings_page
-    
+
     def app_settings_page(self) -> QWidget:
         app_settings_page = self.dataexplorer.get_widget()
+        app_settings_page.setObjectName("ContentArea")
         app_settings_layout = QVBoxLayout(app_settings_page)
         self.theme_combobox = QComboBox()
         self.theme_combobox.addItems(self.config["Themes"].keys())
         _ = self.theme_combobox.currentTextChanged.connect(self.set_theme)
         theme_combobox = get_label_widget_row("Theme", self.theme_combobox)
-        build_layout(app_settings_layout,
-                     [theme_combobox])
+        build_layout(app_settings_layout, [theme_combobox])
         app_settings_layout.addStretch()
         return app_settings_page
 

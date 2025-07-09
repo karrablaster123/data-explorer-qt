@@ -80,6 +80,7 @@ class FilterWidget(QWidget):
                     raise InvalidFilterWidgetError()
 
                 self.filter_widget = QLabeledDoubleRangeSlider()
+                self.filter_widget.setObjectName("LabeledRangeSlider")
                 self.debug(f"min: {minimum} max: {maximum}")
                 self.filter_widget.setRange(minimum, maximum)  # noqa # pyright: ignore[reportUnknownArgumentType]
                 self.filter_widget.setValue((minimum, maximum))
