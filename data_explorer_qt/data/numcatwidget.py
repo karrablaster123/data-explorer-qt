@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
 
 import typing
 
-from dataexplorer.guihelper import add_callback_to_standard_signal, build_grid_layout
+from ..guihelper import add_callback_to_standard_signal, build_grid_layout
 
 if typing.TYPE_CHECKING:
     from .datamodel import DataStore
