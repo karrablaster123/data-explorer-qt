@@ -1,5 +1,5 @@
 # pyright: reportArgumentType=false, reportUnknownMemberType=false, reportMissingTypeStubs=false
-from dataexplorer.data.datamodel import (
+from data_explorer_qt.data.datamodel import (
     apply_filter,
     categorical_comparator,
     datetime_comparator,
@@ -8,15 +8,17 @@ from dataexplorer.data.datamodel import (
     numeric_comparator,
     FilterStore,
 )
-from dataexplorer.data.dataenums import Dtype
+from data_explorer_qt.data.dataenums import Dtype
 from spoofs import debug_error_spoof as debug_spoof
 import pandas as pd
+from pathlib import Path
 
 
 def test_dtype_conversion():
     # 6 possible conversions, but only 3 valid conversions
     # Any -> Categorical, Numeric -> Categorical, Categorical -> Datetime.
-    data = pd.read_excel("Test.xlsx", engine="calamine")
+    path_to_data = str( Path(__file__).parent / "Test.xlsx" )
+    data = pd.read_excel(path_to_data, engine="calamine")
     # Dates column is default read as categorical in this case.
     assert not datetime_comparator(data["Dates"])
     # Categorical -> Datetime
@@ -34,7 +36,8 @@ def test_dtype_conversion():
 
 
 def test_nan_handling():
-    data = pd.read_excel("TestNaN.xlsx", engine="calamine")
+    path_to_data = str( Path(__file__).parent / "TestNaN.xlsx" )
+    data = pd.read_excel(path_to_data, engine="calamine")
     data["Dates"] = handle_dtype_operation(data["Dates"], "Datetime", debug_spoof)
     data = handle_nan_operation(data, "Keep as NaN", "Dates", debug_spoof)
     assert data["Dates"].isna().sum() == 2
@@ -45,11 +48,12 @@ def test_nan_handling():
 
 
 def test_filtering():
+    path_to_data = str( Path(__file__).parent / "Test.xlsx" )
     filter = FilterStore(dtype=Dtype.CATEGORICAL, filter_value=["Hello"])
-    data = pd.read_excel("Test.xlsx", engine="calamine")
+    data = pd.read_excel(path_to_data, engine="calamine")
     data = apply_filter(data, column="Header 3", filterstore=filter)
     assert len(data) == 4
-    data = pd.read_excel("Test.xlsx", engine="calamine")
+    data = pd.read_excel(path_to_data, engine="calamine")
     filter = FilterStore(dtype=Dtype.NUMERIC, filter_value=(10, 100))
     data = apply_filter(data, column="Header 1", filterstore=filter)
     assert len(data) == 2
