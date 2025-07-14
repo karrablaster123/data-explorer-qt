@@ -2874,7 +2874,7 @@ class RegressionDialog(PlottingDialog):
                 ax.set_xlabel(f"{self.x_column}")
                 ax.set_ylabel(f"{self.y_column}")
                 ax.legend()
-                ax.set_title(f"{self.y_column} vs {self.x_column}")
+                ax.set_title(f"{self.y_column} vs {self.x_column}; R^2: {self.regression_results.rsquared:.3f}")
                 ax.tick_params(
                     **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
                 )
@@ -2892,7 +2892,7 @@ class RegressionDialog(PlottingDialog):
                 ax.set_xlabel(f"{self.y_column}")
                 ax.set_ylabel("Residuals")
                 ax.legend()
-                ax.set_title(f"Residulas vs {self.y_column}")
+                ax.set_title(f"Residuals vs {self.y_column}; R^2: {self.regression_results.rsquared:.3f}")
                 ax.tick_params(
                     **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
                 )
