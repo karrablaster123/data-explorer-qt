@@ -5,6 +5,17 @@ import traceback
 from math import ceil
 from pprint import pformat
 import typing
+
+import matplotlib
+import matplotlib.colors as mcolors
+from matplotlib.figure import Figure
+from matplotlib.axes import Axes
+import matplotlib.pyplot as plt
+from numpy import ndarray
+import seaborn as sns
+import statsmodels.api as sm
+from statsmodels.regression.linear_model import RegressionResultsWrapper
+from superqt import QCollapsible, QLabeledDoubleSlider
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (
@@ -16,19 +27,12 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QPushButton,
     QRadioButton,
+    QSpacerItem,
     QSpinBox,
+    QTextEdit,
     QVBoxLayout,
     QWidget,
 )
-
-import matplotlib
-import matplotlib.colors as mcolors
-from matplotlib.figure import Figure
-from matplotlib.axes import Axes
-import matplotlib.pyplot as plt
-from numpy import ndarray
-import seaborn as sns
-from superqt import QCollapsible, QLabeledDoubleSlider
 
 from ..guihelper import (
     MultiSelectComboBox,
@@ -76,6 +80,7 @@ class Plotter:
         self.count_dialog: CountPlotDialog | None = None
         self.corrplot_dialog: CorrPlotDialog | None = None
         self.lineplot_dialog: LineDialog | None = None
+        self.regression_dialog: RegressionDialog | None = None
         self.x_tick_spinbox: QDoubleSpinBox = QDoubleSpinBox(
             minimum=0.0, maximum=40.0, value=0.0, singleStep=1.0
         )
@@ -110,11 +115,13 @@ class Plotter:
         self.x_grid_colour_combobox: QComboBox = QComboBox()
         self.x_grid_colour_combobox.addItems(mcolors.BASE_COLORS)
         self.x_grid_alpha_slider: QLabeledDoubleSlider = QLabeledDoubleSlider()
+        self.x_grid_alpha_slider.setObjectName("LabeledRangeSlider")
         self.x_grid_alpha_slider.setRange(0, 1)
         self.x_grid_alpha_slider.setValue(0)
         self.y_grid_colour_combobox: QComboBox = QComboBox()
         self.y_grid_colour_combobox.addItems(mcolors.BASE_COLORS)
         self.y_grid_alpha_slider: QLabeledDoubleSlider = QLabeledDoubleSlider()
+        self.y_grid_alpha_slider.setObjectName("LabeledRangeSlider")
         self.y_grid_alpha_slider.setRange(0, 1)
         self.y_grid_alpha_slider.setValue(0)
         self.plot_params["tick_params"] = {}
@@ -185,6 +192,13 @@ class Plotter:
             self.error("You need a valid active dataset to do this.")
             return
         self.lineplot_dialog = LineDialog(self.dataexplorer, datastore)
+
+    def regression_plotter(self):
+        datastore = self.dataexplorer.datamodel.active_dataset
+        if datastore is None:
+            self.error("You need a valid active dataset to do this.")
+            return
+        self.regression_dialog = RegressionDialog(self.dataexplorer, datastore)
 
     def build_plot_settings_page(self):
         layout = self.dataexplorer.gui.plot_settings_layout
@@ -371,6 +385,7 @@ class HistDialog(PlottingDialog):
         vbox_widget = QVBoxLayout(collapsible_widget)
 
         self.alpha_slider = QLabeledDoubleSlider()
+        self.alpha_slider.setObjectName("LabeledRangeSlider")
         self.alpha_slider.setValue(1.0)
         self.alpha_slider.setRange(0, 1)
         self.alpha_slider.setEdgeLabelMode(
@@ -732,6 +747,7 @@ class ScatterDialog(PlottingDialog):
         )
 
         self.alpha_slider = QLabeledDoubleSlider()
+        self.alpha_slider.setObjectName("LabeledRangeSlider")
         self.alpha_slider.setValue(1.0)
         self.alpha_slider.setRange(0, 1)
         self.alpha_slider.setEdgeLabelMode(
@@ -1261,6 +1277,7 @@ class CatPlotDialog(PlottingDialog):
         )
 
         self.swarm_alpha_slider = QLabeledDoubleSlider()
+        self.swarm_alpha_slider.setObjectName("LabeledRangeSlider")
         self.swarm_alpha_slider.setRange(min=0.0, max=1.0)
         self.swarm_alpha_slider.setValue(1.0)
         swarm_alpha_slider = get_label_widget_row_callback(
@@ -1296,6 +1313,7 @@ class CatPlotDialog(PlottingDialog):
         )
 
         self.strip_alpha_slider = QLabeledDoubleSlider()
+        self.strip_alpha_slider.setObjectName("LabeledRangeSlider")
         self.strip_alpha_slider.setRange(min=0.0, max=1.0)
         self.strip_alpha_slider.setValue(1.0)
         strip_alpha_slider = get_label_widget_row_callback(
@@ -1342,6 +1360,7 @@ class CatPlotDialog(PlottingDialog):
         )
 
         self.box_alpha_slider = QLabeledDoubleSlider()
+        self.box_alpha_slider.setObjectName("LabeledRangeSlider")
         self.box_alpha_slider.setRange(min=0.0, max=1.0)
         self.box_alpha_slider.setValue(1.0)
         box_alpha_slider = get_label_widget_row_callback(
@@ -1389,6 +1408,7 @@ class CatPlotDialog(PlottingDialog):
         )
 
         self.violin_alpha_slider = QLabeledDoubleSlider()
+        self.violin_alpha_slider.setObjectName("LabeledRangeSlider")
         self.violin_alpha_slider.setRange(min=0.0, max=1.0)
         self.violin_alpha_slider.setValue(1.0)
         violin_alpha_slider = get_label_widget_row_callback(
@@ -1434,6 +1454,7 @@ class CatPlotDialog(PlottingDialog):
         self.boxen_fill_checkbox.setChecked(True)
 
         self.boxen_alpha_slider = QLabeledDoubleSlider()
+        self.boxen_alpha_slider.setObjectName("LabeledRangeSlider")
         self.boxen_alpha_slider.setRange(min=0.0, max=1.0)
         self.boxen_alpha_slider.setValue(1.0)
         boxen_alpha_slider = get_label_widget_row_callback(
@@ -1468,6 +1489,7 @@ class CatPlotDialog(PlottingDialog):
         self.point_dodge_checkbox.setToolTip("Useful with overlapping hues")
 
         self.point_alpha_slider = QLabeledDoubleSlider()
+        self.point_alpha_slider.setObjectName("LabeledRangeSlider")
         self.point_alpha_slider.setRange(min=0.0, max=1.0)
         self.point_alpha_slider.setValue(1.0)
         point_alpha_slider = get_label_widget_row_callback(
@@ -1508,6 +1530,7 @@ class CatPlotDialog(PlottingDialog):
         self.bar_fill_checkbox.setChecked(True)
 
         self.bar_alpha_slider = QLabeledDoubleSlider()
+        self.bar_alpha_slider.setObjectName("LabeledRangeSlider")
         self.bar_alpha_slider.setRange(min=0.0, max=1.0)
         self.bar_alpha_slider.setValue(1.0)
         bar_alpha_slider = get_label_widget_row_callback(
@@ -1862,6 +1885,7 @@ class CountPlotDialog(PlottingDialog):
         collapsible.addWidget(collapsible_widget)
         vbox_widget = QVBoxLayout(collapsible_widget)
         self.alpha_slider = QLabeledDoubleSlider()
+        self.alpha_slider.setObjectName("LabeledRangeSlider")
         self.alpha_slider.setValue(1.0)
         self.alpha_slider.setRange(0, 1)
         self.alpha_slider.setEdgeLabelMode(
@@ -2359,6 +2383,7 @@ class LineDialog(PlottingDialog):
         )
 
         self.alpha_slider = QLabeledDoubleSlider()
+        self.alpha_slider.setObjectName("LabeledRangeSlider")
         self.alpha_slider.setValue(1.0)
         self.alpha_slider.setRange(0, 1)
         self.alpha_slider.setEdgeLabelMode(
@@ -2659,6 +2684,260 @@ class LineDialog(PlottingDialog):
         self.on_plot()
         if self.plot_mode == LinePlotMode.INVALID:
             return
+        try:
+            plot = self.plotter()
+            self.dynamic_plot_widget.update_dynamic_widget(plot)
+        except Exception:
+            self.error("Unable to plot. Err: " + traceback.format_exc())
+            return
+
+    @typing.override
+    def closeEvent(self, event: QCloseEvent):
+        if self.dynamic_plot_widget is not None:
+            _ = self.dynamic_plot_widget.close()
+
+        return super().closeEvent(event)
+
+
+class RegressionPlotMode(Enum):
+    SINGLE_X = auto()
+    MULTIPLE_X = auto()
+
+
+@typing.final
+class RegressionDialog(PlottingDialog):
+    x_column: str = ""
+    x_columns: list[str] = []
+    y_column: str = ""
+    alpha: float = 1.0
+    add_constant: bool = False
+    marker: str = MARKERS[1]
+    linestyle: str = LINE_STYLES[0]
+    plot_mode: RegressionPlotMode = RegressionPlotMode.SINGLE_X
+    regression_results = None
+
+    def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore"):
+        super().__init__(dataexplorer, datastore, "Regression")
+        self.resize(800,800)
+
+        get_label_widget_row_ = partial(
+            get_label_widget_row_callback, callback=self.on_widget_change
+        )
+
+        self.x_columns_combobox = self.setup_column_combobox(True, True)
+        x_columns_combobox = get_label_widget_row_(
+            "X Axis Variable", self.x_columns_combobox
+        )
+        self.x_columns_combobox.setToolTip("Single Selection will produce a Y~X plot.\n"
+                                          "Multiple Selections will produce a residual plot")
+        self.y_column_combobox = self.setup_column_combobox(True)
+        y_column_combobox = get_label_widget_row_(
+            "Y Axis Variables", self.y_column_combobox
+        )
+
+        self.add_constant_checkbox = QCheckBox("Add Constant?")
+        self.add_constant_checkbox.setChecked(True)
+
+        mid_spacer = QSpacerItem(20, 100)
+
+        collapsible = QCollapsible("Additional Settings")
+        collapsible_widget = self.dataexplorer.get_widget()
+        collapsible.addWidget(collapsible_widget)
+        vbox_widget = QVBoxLayout(collapsible_widget)
+
+        self.alpha_slider = QLabeledDoubleSlider()
+        self.alpha_slider.setObjectName("LabeledRangeSlider")
+        self.alpha_slider.setValue(1.0)
+        self.alpha_slider.setRange(0, 1)
+        self.alpha_slider.setEdgeLabelMode(
+            QLabeledDoubleSlider.EdgeLabelMode.LabelIsValue
+        )
+        alpha_slider = get_label_widget_row_("Opacity", self.alpha_slider)
+
+        self.marker_combobox = QComboBox()
+        self.marker_combobox.addItems(MARKERS)
+        self.marker_combobox.setCurrentIndex(1)
+        marker_combobox = get_label_widget_row_("Marker:", self.marker_combobox)
+        self.linestyle_combobox = QComboBox()
+        self.linestyle_combobox.addItems(LINE_STYLES)
+        linestyle_combobox = get_label_widget_row_(
+            "Line Style:", self.linestyle_combobox
+        )
+
+        build_layout_with_callbacks(
+            vbox_widget,
+            [
+                [alpha_slider],
+                [marker_combobox, linestyle_combobox],
+            ],
+            self.on_widget_change,
+        )
+
+        bot_spacer = QSpacerItem(20, 100)
+        plot_button = QPushButton("Plot")
+        _ = plot_button.clicked.connect(self.plot)
+        dynamic_plot_button = QPushButton("Dynamic Plot")
+        _ = dynamic_plot_button.clicked.connect(self.dynamic_plot)
+        
+        self.regression_summary_title = QLabel("Regression Summary")
+        self.regression_summary_title.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.regression_summary_text = QTextEdit()
+        self.regression_summary_text.setObjectName("RegressionResults")
+        self.regression_summary_text.setReadOnly(True)
+
+        build_layout_with_callbacks(
+            self._layout,
+            [
+                [x_columns_combobox, y_column_combobox],
+                [self.add_constant_checkbox],
+                [mid_spacer],
+                [collapsible],
+                [plot_button, dynamic_plot_button],
+                [bot_spacer],
+                [self.regression_summary_title],
+                [self.regression_summary_text]
+            ],
+            self.on_widget_change,
+        )
+        self.show()
+
+    def setup_column_combobox(self, mandatory: bool, multi_variable: bool = False):
+        if multi_variable:
+            box = MultiSelectComboBox()
+        else:
+            box = QComboBox()
+        if mandatory:
+            box.addItems(self.datastore.columns)
+        else:
+            box.addItem("")
+            box.addItems(self.datastore.columns)
+        return box
+
+    @typing.override
+    def on_plot(self):
+        super().on_plot()
+        self.x_columns = self.x_columns_combobox.currentData()
+        self.y_column = self.y_column_combobox.currentText()
+
+        self.add_constant = self.add_constant_checkbox.isChecked()
+        self.alpha = self.alpha_slider.value()
+        self.marker = self.marker_combobox.currentText()
+        self.linestyle = self.linestyle_combobox.currentText()
+
+        if len(self.x_columns) == 0:
+            self.error("No X columns selected!")
+            return
+
+        self.debug("Plotting RegressionPlot:")
+        self.debug(f"{self.x_columns} {self.y_column}")
+
+        if len(self.x_columns) > 1:
+            self.plot_mode = RegressionPlotMode.MULTIPLE_X
+        else:
+            self.plot_mode = RegressionPlotMode.SINGLE_X
+            self.x_column = self.x_columns[0]
+
+        X = self.plotting_data[self.x_columns].copy()
+        Y = self.plotting_data[[self.y_column]].copy()
+        if self.add_constant:
+            X = sm.add_constant(X)
+        try:
+            model = sm.OLS(Y, X)
+            self.regression_results = model.fit()
+            summary = self.regression_results.summary()
+            self.regression_summary_text.setText(str(summary))
+        except Exception:
+            self.debug(traceback.format_exc())
+            self.regression_summary_text.setText("Unsuccessful")
+            self.regression_results = None
+
+    def plotter(self) -> Figure:
+        self.debug(str(self.plot_mode))
+        if not isinstance(self.regression_results, RegressionResultsWrapper):
+            self.error("Issue Fitting Data")
+            return plt.figure()
+        match self.plot_mode:
+            case RegressionPlotMode.SINGLE_X:
+                fig, ax = plt.subplots()
+                ax.scatter(self.plotting_data[self.x_column],
+                        self.plotting_data[self.y_column],
+                        marker=self.marker,
+                        c="b",
+                        label="Data",
+                        alpha=self.alpha)
+                ax.plot(self.plotting_data[self.x_column],
+                        self.regression_results.fittedvalues,
+                        linestyle=self.linestyle,
+                        c="orange",
+                        label="Regression Line",
+                        alpha=self.alpha)
+                ax.set_xlabel(f"{self.x_column}")
+                ax.set_ylabel(f"{self.y_column}")
+                ax.legend()
+                ax.set_title(f"{self.y_column} vs {self.x_column}")
+                ax.tick_params(
+                    **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
+                )
+                ax.tick_params(
+                    **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
+                )
+                return fig
+            case RegressionPlotMode.MULTIPLE_X:
+                fig, ax = plt.subplots()
+                ax.scatter(self.plotting_data[self.y_column],
+                        self.regression_results.resid,
+                        marker=self.marker,
+                        label="Residuals",
+                        alpha=self.alpha)
+                ax.set_xlabel(f"{self.y_column}")
+                ax.set_ylabel("Residuals")
+                ax.legend()
+                ax.set_title(f"Residulas vs {self.y_column}")
+                ax.tick_params(
+                    **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
+                )
+                ax.tick_params(
+                    **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
+                )
+                return fig
+
+
+    @typing.override
+    def plot(self):
+        self.on_plot()
+        try:
+            facetgrid = self.plotter()
+            if isinstance(facetgrid, Figure):
+                facetgrid.show()
+            else:
+                facetgrid.figure.show()
+        except Exception:
+            self.error("Unable to plot. Err: " + traceback.format_exc())
+
+    @typing.override
+    def dynamic_plot(self):
+        if self.dynamic_plot_widget is None:
+            self.dynamic_plot_widget = EmbeddedDynamicPlot(
+                self.dataexplorer,
+                self.datastore,
+                f"Regression Plot: {self.datastore.name}",
+                self,
+            )
+            self.dynamic_callback_id = self.datastore.add_filter_change_callback(
+                self.redraw_dynamic_plot
+            )
+            self.redraw_dynamic_plot()
+        else:
+            self.error(
+                "You cannot make more than two dynamic plots for each plotting widget dialog."
+            )
+
+    @typing.override
+    def redraw_dynamic_plot(self):
+        if self.dynamic_plot_widget is None:
+            self.debug("Incorrect call of self.dynamic_plot_widget")
+            return
+        self.on_plot()
         try:
             plot = self.plotter()
             self.dynamic_plot_widget.update_dynamic_widget(plot)

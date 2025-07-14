@@ -15,6 +15,7 @@ dependencies = [
     "matplotlib>=3.9.2",
     "PySideSix-Frameless-Window>=0.7",
     "pyarrow",
+    "statsmodels>=0.14",
 ]
 requires-python = ">=3.12"
 readme="README.md"

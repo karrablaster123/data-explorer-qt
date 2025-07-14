@@ -520,6 +520,9 @@ LabeledRangeSlider = """
     #LabeledRangeSlider QLineEdit {
         color: #E0E0E0;
     }
+    #LabeledRangeSlider QDoubleSpinBox {
+        color: #E0E0E0;
+    }
 """
 
 StandardWidget = """
@@ -541,6 +544,16 @@ ScrollArea = """
         color: #f0f0f0;
     }
     #ScrollAreaWidget {
+        background-color: #2b2b2b;
+    }
+"""
+
+RegressionResults = """
+    QTextEdit#RegressionResults {
+        font-family: "Consolas";
+        font-size: 10pt;
+        font-weight: bold;
+        color: #f0f0f0;
         background-color: #2b2b2b;
     }
 """

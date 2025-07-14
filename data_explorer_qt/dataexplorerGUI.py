@@ -385,7 +385,7 @@ class DataExplorerGUI(FramelessMainWindow):
 
         regression_plot_button = QPushButton("Regression Plot")
         _ = regression_plot_button.clicked.connect(
-                lambda: self._not_implemented()
+                lambda: self.dataexplorer.plotter.regression_plotter()
         )
 
         joint_grid_button = QPushButton("Joint Grid Plot")
