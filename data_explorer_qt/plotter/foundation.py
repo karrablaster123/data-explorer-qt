@@ -277,9 +277,15 @@ class PlottingDialog(QWidget):
 
     def redraw_dynamic_plot(self): ...
 
-    def delete_dynamic_plot(self): ...
+    def delete_dynamic_plot(self):
+        self.debug("Dynamic Plot Widget Deleted")
+        self.dynamic_plot_widget = None
+        self.datastore.remove_filter_change_callback(self.dynamic_callback_id)
+        self.dynamic_callback_id = -1
 
-    def on_widget_change(self): ...
+    def on_widget_change(self):
+        if self.dynamic_plot_widget is not None:
+            self.redraw_dynamic_plot()
 
     @override
     def closeEvent(self, event: QCloseEvent) -> None:

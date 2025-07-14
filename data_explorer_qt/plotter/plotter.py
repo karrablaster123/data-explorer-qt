@@ -625,23 +625,11 @@ class HistDialog(PlottingDialog):
             return
 
     @typing.override
-    def delete_dynamic_plot(self):
-        self.debug("Dynamic Plot Widget Deleted")
-        self.dynamic_plot_widget = None
-        self.datastore.remove_filter_change_callback(self.dynamic_callback_id)
-        self.dynamic_callback_id = -1
-
-    @typing.override
     def closeEvent(self, event: QCloseEvent):
         if self.dynamic_plot_widget is not None:
             _ = self.dynamic_plot_widget.close()
 
         return super().closeEvent(event)
-
-    @typing.override
-    def on_widget_change(self):
-        if self.dynamic_plot_widget is not None:
-            self.redraw_dynamic_plot()
 
 
 class ScatterPlotMode(Enum):
@@ -1085,23 +1073,11 @@ class ScatterDialog(PlottingDialog):
             return
 
     @typing.override
-    def delete_dynamic_plot(self):
-        self.debug("Dynamic Plot Widget Deleted")
-        self.dynamic_plot_widget = None
-        self.datastore.remove_filter_change_callback(self.dynamic_callback_id)
-        self.dynamic_callback_id = -1
-
-    @typing.override
     def closeEvent(self, event: QCloseEvent):
         if self.dynamic_plot_widget is not None:
             _ = self.dynamic_plot_widget.close()
 
         return super().closeEvent(event)
-
-    @typing.override
-    def on_widget_change(self):
-        if self.dynamic_plot_widget is not None:
-            self.redraw_dynamic_plot()
 
 
 class CatPlotMode(Enum):
@@ -1828,23 +1804,11 @@ class CatPlotDialog(PlottingDialog):
             return
 
     @typing.override
-    def delete_dynamic_plot(self):
-        self.debug("Dynamic Plot Widget Deleted")
-        self.dynamic_plot_widget = None
-        self.datastore.remove_filter_change_callback(self.dynamic_callback_id)
-        self.dynamic_callback_id = -1
-
-    @typing.override
     def closeEvent(self, event: QCloseEvent):
         if self.dynamic_plot_widget is not None:
             _ = self.dynamic_plot_widget.close()
 
         return super().closeEvent(event)
-
-    @typing.override
-    def on_widget_change(self):
-        if self.dynamic_plot_widget is not None:
-            self.redraw_dynamic_plot()
 
 
 @typing.final
@@ -2097,23 +2061,11 @@ class CountPlotDialog(PlottingDialog):
             return
 
     @typing.override
-    def delete_dynamic_plot(self):
-        self.debug("Dynamic Plot Widget Deleted")
-        self.dynamic_plot_widget = None
-        self.datastore.remove_filter_change_callback(self.dynamic_callback_id)
-        self.dynamic_callback_id = -1
-
-    @typing.override
     def closeEvent(self, event: QCloseEvent):
         if self.dynamic_plot_widget is not None:
             _ = self.dynamic_plot_widget.close()
 
         return super().closeEvent(event)
-
-    @typing.override
-    def on_widget_change(self):
-        if self.dynamic_plot_widget is not None:
-            self.redraw_dynamic_plot()
 
 
 @typing.final
@@ -2313,23 +2265,11 @@ class CorrPlotDialog(PlottingDialog):
             return
 
     @typing.override
-    def delete_dynamic_plot(self):
-        self.debug("Dynamic Plot Widget Deleted")
-        self.dynamic_plot_widget = None
-        self.datastore.remove_filter_change_callback(self.dynamic_callback_id)
-        self.dynamic_callback_id = -1
-
-    @typing.override
     def closeEvent(self, event: QCloseEvent):
         if self.dynamic_plot_widget is not None:
             _ = self.dynamic_plot_widget.close()
 
         return super().closeEvent(event)
-
-    @typing.override
-    def on_widget_change(self):
-        if self.dynamic_plot_widget is not None:
-            self.redraw_dynamic_plot()
 
 
 class LinePlotMode(Enum):
@@ -2727,20 +2667,8 @@ class LineDialog(PlottingDialog):
             return
 
     @typing.override
-    def delete_dynamic_plot(self):
-        self.debug("Dynamic Plot Widget Deleted")
-        self.dynamic_plot_widget = None
-        self.datastore.remove_filter_change_callback(self.dynamic_callback_id)
-        self.dynamic_callback_id = -1
-
-    @typing.override
     def closeEvent(self, event: QCloseEvent):
         if self.dynamic_plot_widget is not None:
             _ = self.dynamic_plot_widget.close()
 
         return super().closeEvent(event)
-
-    @typing.override
-    def on_widget_change(self):
-        if self.dynamic_plot_widget is not None:
-            self.redraw_dynamic_plot()
