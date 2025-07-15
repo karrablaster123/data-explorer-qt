@@ -518,6 +518,7 @@ FilterWidgetLabel = """
 
 LabeledRangeSlider = """
     #LabeledRangeSlider QLineEdit {
+        padding: 0px 0px 0px 0px;
         color: #E0E0E0;
     }
     #LabeledRangeSlider QDoubleSpinBox {

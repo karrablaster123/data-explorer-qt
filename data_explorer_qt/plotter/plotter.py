@@ -423,6 +423,7 @@ class HistDialog(PlottingDialog):
         )
 
         self.n_cols_spinbox = QSpinBox(minimum=1, maximum=10, value=5)
+        self.n_cols_spinbox.setToolTip("Does not work if row is set")
         n_cols_spinbox = get_label_widget_row_(
             "Maximum # of columns", self.n_cols_spinbox
         )
@@ -515,10 +516,10 @@ class HistDialog(PlottingDialog):
         self.rugplot = self.rugplot_checkbox.isChecked()
         self.palette_type = self.palette_type_combobox.currentText()
 
-        if self.col_column is not None:
+        if self.col_column is not None and self.row_column is None:
             self.n_cols = min(
                 self.n_cols_spinbox.value(),
-                len(self.plotting_data[self.col_column].unique()),  # pyright: ignore[reportUnknownArgumentType]
+                len(self.plotting_data[self.col_column].unique()),  
             )
         else:
             self.n_cols = None
@@ -531,6 +532,7 @@ class HistDialog(PlottingDialog):
                 self.error(
                     "The formatting for bin widths is incorrect. Please check it."
                 )
+                self.debug(traceback.format_exc())
                 return
             self.bins = list_floats
         elif self.bin_num.isChecked():
@@ -667,7 +669,7 @@ class ScatterDialog(PlottingDialog):
     col_column: str | None = None
     row_column: str | None = None
     size_column: str | None = None
-    n_cols: int = 3
+    n_cols: int | None = 5
     log_x: bool = False
     log_y: bool = False
     multi_y_handler: str = ""
@@ -872,11 +874,18 @@ class ScatterDialog(PlottingDialog):
         self.row_column = self.get_categorical_column_name(self.row_column)
         self.size_column = self.get_categorical_column_name(self.size_column)
 
+        if self.col_column is not None and self.row_column is None:
+            self.n_cols = min(
+                self.n_cols_spinbox.value(),
+                len(self.plotting_data[self.col_column].unique()),  
+            )
+        else:
+            self.n_cols = None
+
     def plotter(self) -> Figure | sns.FacetGrid:
         self.debug(str(self.plot_mode))
         match self.plot_mode:
             case ScatterPlotMode.RELPLOT:
-                col_wrap = None if self.col_column is None else self.n_cols
                 fg = sns.relplot(
                     self.plotting_data,
                     x=self.x_column,
@@ -886,10 +895,14 @@ class ScatterDialog(PlottingDialog):
                     style=self.style_column,
                     row=self.row_column,
                     col=self.col_column,
-                    col_wrap=col_wrap,
+                    col_wrap=self.n_cols,
                     palette=self.get_palette(),
                     alpha=self.alpha,
                 )
+                if self.log_x:
+                    fg.set(xscale="log")
+                if self.log_y:
+                    fg.set(yscale="log")
                 for ax in fg.axes.flatten():
                     ax.grid()
                 fg = fg.tick_params(
@@ -917,9 +930,9 @@ class ScatterDialog(PlottingDialog):
     def _single_y_colorbar(self) -> Figure:
         fig, ax = plt.subplots()
         im = ax.scatter(
-            self.plotting_data[self.x_column],  # pyright: ignore[reportUnknownArgumentType]
-            self.plotting_data[self.y_column],  # pyright: ignore[reportUnknownArgumentType]
-            c=self.plotting_data[self.colorbar_column],  # pyright: ignore[reportUnknownArgumentType]
+            self.plotting_data[self.x_column],  
+            self.plotting_data[self.y_column],  
+            c=self.plotting_data[self.colorbar_column],  
             marker=self.marker,
             alpha=self.alpha,
         )
@@ -928,6 +941,10 @@ class ScatterDialog(PlottingDialog):
         )
         _ = ax.set_xlabel(self.x_column)
         _ = ax.set_ylabel(self.y_column)
+        if self.log_x:
+            ax.set_xscale("log")
+        if self.log_y:
+            ax.set_yscale("log")
         _ = fig.colorbar(im, ax=ax, label=self.colorbar_column)
         ax.grid(True)
         ax.tick_params(
@@ -939,29 +956,35 @@ class ScatterDialog(PlottingDialog):
         return fig
 
     def _subplots(self) -> Figure:
+        if self.n_cols is None:
+            self.debug("Something went wrong with n_cols")
+            self.n_cols = 5
         n_rows = ceil(len(self.y_columns) / self.n_cols)
-        fig, axs = plt.subplots(nrows=n_rows, ncols=self.n_cols, sharex=True)  # pyright: ignore[reportAny]
+        fig, axs = plt.subplots(nrows=n_rows, ncols=self.n_cols, sharex=True)
         assert isinstance(axs, ndarray)
         axs = axs.flatten()
         mode_colorbar = self.colorbar_column != ""
         c = None
         if mode_colorbar:
-            c = self.plotting_data[self.colorbar_column]  # pyright: ignore[reportUnknownVariableType]
+            c = self.plotting_data[self.colorbar_column]
 
-        for ax, y_col in zip(axs, self.y_columns):  # pyright: ignore[reportAny]
+        for ax, y_col in zip(axs, self.y_columns):
             if not isinstance(ax, Axes):
                 self.error("Not an axis instance (subplots)")
                 return fig
             im = ax.scatter(
-                self.plotting_data[self.x_column],  # pyright: ignore[reportUnknownArgumentType]
-                self.plotting_data[y_col],  # pyright: ignore[reportUnknownArgumentType]
-                c=c,  # pyright: ignore[reportUnknownArgumentType]
+                self.plotting_data[self.x_column],
+                self.plotting_data[y_col],
+                c=c,  
                 marker=self.marker,
                 alpha=self.alpha,
             )
-            _ = ax.set_title(f"{y_col} vs {self.x_column}")
             _ = ax.set_ylabel(y_col)
             _ = ax.set_xlabel(self.x_column)
+            if self.log_x:
+                ax.set_xscale("log")
+            if self.log_y:
+                ax.set_yscale("log")
             ax.grid(True)
             ax.tick_params(
                 **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
@@ -970,7 +993,10 @@ class ScatterDialog(PlottingDialog):
                 **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
             )
             if mode_colorbar:
-                _ = fig.colorbar(im, ax=ax)
+                _ = fig.colorbar(im, ax=ax, label=self.colorbar_column)
+                _ = ax.set_title(f"{y_col} vs {self.x_column}; Color: {self.colorbar_column}")
+            else:
+                _ = ax.set_title(f"{y_col} vs {self.x_column}")
 
         return fig
 
@@ -978,8 +1004,8 @@ class ScatterDialog(PlottingDialog):
         fig, ax = plt.subplots()
         for y_col in self.y_columns:
             _ = ax.scatter(
-                self.plotting_data[self.x_column],  # pyright: ignore[reportUnknownArgumentType]
-                self.plotting_data[y_col],  # pyright: ignore[reportUnknownArgumentType]
+                self.plotting_data[self.x_column],  
+                self.plotting_data[y_col],  
                 label=y_col,
                 marker=self.marker,
                 alpha=self.alpha,
@@ -988,6 +1014,10 @@ class ScatterDialog(PlottingDialog):
         _ = ax.set_title(", ".join(self.y_columns) + f" vs {self.x_column}", wrap=True)
         _ = ax.set_xlabel(self.x_column)
         _ = ax.set_ylabel(", ".join(self.y_columns), wrap=True)
+        if self.log_x:
+            ax.set_xscale("log")
+        if self.log_y:
+            ax.set_yscale("log")
         ax.tick_params(
             **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
         )
@@ -1015,8 +1045,8 @@ class ScatterDialog(PlottingDialog):
             if loc != 0:
                 axis.spines.right.set_position(("axes", loc))
             _ = axis.scatter(
-                self.plotting_data[self.x_column],  # pyright: ignore[reportUnknownArgumentType]
-                self.plotting_data[y_col],  # pyright: ignore[reportUnknownArgumentType]
+                self.plotting_data[self.x_column],  
+                self.plotting_data[y_col],  
                 c=color,
                 marker=self.marker,
                 alpha=self.alpha,
@@ -1038,6 +1068,7 @@ class ScatterDialog(PlottingDialog):
             axis.yaxis.label.set_color(color)
 
         _ = ax.set_title(", ".join(self.y_columns) + f" vs {self.x_column}", wrap=True)
+        _ = ax.set_xlabel(self.x_column)
 
         return fig
 
@@ -1202,6 +1233,7 @@ class CatPlotDialog(PlottingDialog):
         self.legend_checkbox.setChecked(True)
 
         self.n_cols_spinbox = QSpinBox(minimum=1, maximum=10, value=5)
+        self.n_cols_spinbox.setToolTip("Does not work if row is set")
         n_cols_spinbox = get_label_widget_row_(
             "Maximum # of columns", self.n_cols_spinbox
         )
@@ -1265,6 +1297,7 @@ class CatPlotDialog(PlottingDialog):
         layout = QVBoxLayout(widget)
         self.swarm_marker_combobox = QComboBox()
         self.swarm_marker_combobox.addItems(MARKERS)
+        self.swarm_marker_combobox.setCurrentIndex(1) # 0 is empty. 
         swarm_marker_combobox = get_label_widget_row_callback(
             "Marker:", self.swarm_marker_combobox, self.on_widget_change
         )
@@ -1301,6 +1334,7 @@ class CatPlotDialog(PlottingDialog):
         layout = QVBoxLayout(widget)
         self.strip_marker_combobox = QComboBox()
         self.strip_marker_combobox.addItems(MARKERS)
+        self.strip_marker_combobox.setCurrentIndex(1) # 0 is empty. 
         strip_marker_combobox = get_label_widget_row_callback(
             "Marker:", self.strip_marker_combobox, self.on_widget_change
         )
@@ -1725,10 +1759,10 @@ class CatPlotDialog(PlottingDialog):
         self.swap_xy = self.swap_xy_checkbox.isChecked()
         self.palette_type = self.palette_type_combobox.currentText()
 
-        if self.col_column is not None:
+        if self.col_column is not None and self.row_column is None:
             self.n_cols = min(
                 self.n_cols_spinbox.value(),
-                len(self.plotting_data[self.col_column].unique()),  # pyright: ignore[reportUnknownArgumentType]
+                len(self.plotting_data[self.col_column].unique()),  
             )
         else:
             self.n_cols = None
@@ -1774,7 +1808,7 @@ class CatPlotDialog(PlottingDialog):
             log_scale=(self.log_x, self.log_y),
             legend=self.legend,
             palette=self.get_palette(),
-            **self.kwargs,  # pyright: ignore[reportAny]
+            **self.kwargs,  
         )
         for ax in fg.axes.flatten():
             ax.grid()
@@ -1876,6 +1910,7 @@ class CountPlotDialog(PlottingDialog):
         self.log_y_checkbox = QCheckBox("Log Y")
 
         self.n_cols_spinbox = QSpinBox(minimum=1, maximum=10, value=5)
+        self.n_cols_spinbox.setToolTip("Does not work if row is set")
         n_cols_spinbox = get_label_widget_row_(
             "Maximum # of columns", self.n_cols_spinbox
         )
@@ -1995,10 +2030,10 @@ class CountPlotDialog(PlottingDialog):
         self.swap_xy = self.swap_xy_checkbox.isChecked()
         self.palette_type = self.palette_type_combobox.currentText()
 
-        if self.col_column is not None:
+        if self.col_column is not None and self.row_column is None:
             self.n_cols = min(
                 self.n_cols_spinbox.value(),
-                len(self.plotting_data[self.col_column].unique()),  # pyright: ignore[reportUnknownArgumentType]
+                len(self.plotting_data[self.col_column].unique()),  
             )
         else:
             self.n_cols = None
@@ -2192,7 +2227,7 @@ class CorrPlotDialog(PlottingDialog):
     @typing.override
     def on_plot(self):
         super().on_plot()
-        self.plotting_data = self.plotting_data[  # pyright: ignore[reportAttributeAccessIssue]
+        self.plotting_data = self.plotting_data[  
             self.datastore.numeric_columns + self.datastore.datetime_columns
         ]
         self.variable_columns = self.variable_columns_combobox.currentData()
@@ -2214,12 +2249,12 @@ class CorrPlotDialog(PlottingDialog):
 
         if len(self.y_columns) > 0:
             self.plotting_data = self.plotting_data.corr(self.correl_statistic)
-            self.plotting_data = self.plotting_data[  # pyright: ignore[reportAttributeAccessIssue]
+            self.plotting_data = self.plotting_data[  
                 self.plotting_data.index.isin(self.y_columns)
             ]
-            self.plotting_data = self.plotting_data[self.variable_columns]  # pyright: ignore[reportAttributeAccessIssue]
+            self.plotting_data = self.plotting_data[self.variable_columns]  
         else:
-            self.plotting_data = self.plotting_data[self.variable_columns].corr(  # pyright: ignore[reportAttributeAccessIssue]
+            self.plotting_data = self.plotting_data[self.variable_columns].corr(  
                 self.correl_statistic
             )
 
@@ -2314,7 +2349,7 @@ class LineDialog(PlottingDialog):
     col_column: str | None = None
     row_column: str | None = None
     size_column: str | None = None
-    n_cols: int = 3
+    n_cols: int | None = 3
     log_x: bool = False
     log_y: bool = False
     multi_y_handler: str = ""
@@ -2508,11 +2543,19 @@ class LineDialog(PlottingDialog):
         self.row_column = self.get_categorical_column_name(self.row_column)
         self.size_column = self.get_categorical_column_name(self.size_column)
 
+        if self.col_column is not None and self.row_column is None:
+            self.n_cols = min(
+                self.n_cols_spinbox.value(),
+                len(self.plotting_data[self.col_column].unique()),  
+            )
+        else:
+            self.n_cols = None
+
+
     def plotter(self) -> Figure | sns.FacetGrid:
         self.debug(str(self.plot_mode))
         match self.plot_mode:
             case LinePlotMode.RELPLOT:
-                col_wrap = None if self.col_column is None else self.n_cols
                 fg = sns.relplot(
                     self.plotting_data,
                     x=self.x_column,
@@ -2522,11 +2565,15 @@ class LineDialog(PlottingDialog):
                     style=self.style_column,
                     row=self.row_column,
                     col=self.col_column,
-                    col_wrap=col_wrap,
+                    col_wrap=self.n_cols,
                     palette=self.get_palette(),
                     kind="line",
                     alpha=self.alpha,
                 )
+                if self.log_x:
+                    fg.set(xscale="log")
+                if self.log_y:
+                    fg.set(yscale="log")
                 for ax in fg.axes.flatten():
                     ax.grid()
                 fg = fg.tick_params(
@@ -2550,22 +2597,28 @@ class LineDialog(PlottingDialog):
                 return plt.figure()
 
     def _subplots(self) -> Figure:
+        if self.n_cols is None:
+            self.n_cols = 5
         n_rows = ceil(len(self.y_columns) / self.n_cols)
-        fig, axs = plt.subplots(nrows=n_rows, ncols=self.n_cols, sharex=True)  # pyright: ignore[reportAny]
+        fig, axs = plt.subplots(nrows=n_rows, ncols=self.n_cols, sharex=True)  
         assert isinstance(axs, ndarray)
         axs = axs.flatten()
 
-        for ax, y_col in zip(axs, self.y_columns):  # pyright: ignore[reportAny]
+        for ax, y_col in zip(axs, self.y_columns):  
             if not isinstance(ax, Axes):
                 self.error("Not an axis instance (subplots)")
                 return fig
             _ = ax.plot(
-                self.plotting_data[self.x_column],  # pyright: ignore[reportUnknownArgumentType]
-                self.plotting_data[y_col],  # pyright: ignore[reportUnknownArgumentType]
+                self.plotting_data[self.x_column],  
+                self.plotting_data[y_col],  
                 marker=self.marker,
                 linestyle=self.linestyle,
                 alpha=self.alpha,
             )
+            if self.log_x:
+                ax.set_xscale("log")
+            if self.log_y:
+                ax.set_yscale("log")
             _ = ax.set_title(f"{y_col} vs {self.x_column}")
             _ = ax.set_ylabel(y_col)
             _ = ax.set_xlabel(self.x_column)
@@ -2581,13 +2634,17 @@ class LineDialog(PlottingDialog):
         fig, ax = plt.subplots()
         for y_col in self.y_columns:
             _ = ax.plot(
-                self.plotting_data[self.x_column],  # pyright: ignore[reportUnknownArgumentType]
-                self.plotting_data[y_col],  # pyright: ignore[reportUnknownArgumentType]
+                self.plotting_data[self.x_column],  
+                self.plotting_data[y_col],  
                 label=y_col,
                 marker=self.marker,
                 linestyle=self.linestyle,
                 alpha=self.alpha,
             )
+        if self.log_x:
+            ax.set_xscale("log")
+        if self.log_y:
+            ax.set_yscale("log")
         _ = ax.set_title(", ".join(self.y_columns) + f" vs {self.x_column}", wrap=True)
         _ = ax.set_xlabel(self.x_column)
         _ = ax.set_ylabel(", ".join(self.y_columns), wrap=True)
@@ -2618,8 +2675,8 @@ class LineDialog(PlottingDialog):
             if loc != 0:
                 axis.spines.right.set_position(("axes", loc))
             _ = axis.plot(
-                self.plotting_data[self.x_column],  # pyright: ignore[reportUnknownArgumentType]
-                self.plotting_data[y_col],  # pyright: ignore[reportUnknownArgumentType]
+                self.plotting_data[self.x_column],  
+                self.plotting_data[y_col],  
                 c=color,
                 marker=self.marker,
                 linestyle=self.linestyle,
@@ -2875,6 +2932,7 @@ class RegressionDialog(PlottingDialog):
                 ax.set_ylabel(f"{self.y_column}")
                 ax.legend()
                 ax.set_title(f"{self.y_column} vs {self.x_column}; R^2: {self.regression_results.rsquared:.3f}")
+                ax.grid(True)
                 ax.tick_params(
                     **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
                 )
@@ -2893,6 +2951,7 @@ class RegressionDialog(PlottingDialog):
                 ax.set_ylabel("Residuals")
                 ax.legend()
                 ax.set_title(f"Residuals vs {self.y_column}; R^2: {self.regression_results.rsquared:.3f}")
+                ax.grid(True)
                 ax.tick_params(
                     **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
                 )

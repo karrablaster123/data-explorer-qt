@@ -121,8 +121,7 @@ class DataStore:
             f"Filtered - Rows: {self.filtered_data.shape[0]}, Columns: {self.filtered_data.shape[1]}"
         )
 
-        for callback in self.on_filter_change_callbacks.values():
-            callback()
+        self.replot_callbacks()
 
     def add_filter_change_callback(self, callback: Callable[[], None]) -> int:
         callback_id = self.callback_id

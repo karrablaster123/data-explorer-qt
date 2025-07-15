@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
 )
 
 import typing
+import traceback
 
 from ..guihelper import add_callback_to_standard_signal, build_grid_layout
 
@@ -94,6 +95,7 @@ class NumCatWidget(QWidget):
                 self.error(
                     "The formatting for bin widths is incorrect. Please check it."
                 )
+                self.debug(traceback.format_exc())
                 return
             self.numeric_converter.value = list_floats
 

@@ -8,10 +8,11 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
+    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtCore import QDateTime, QTimeZone, Qt
+from PySide6.QtCore import QDateTime, Qt
 from superqt import QLabeledDoubleRangeSlider
 
 from ..guihelper import build_layout, MultiSelectComboBox
@@ -84,14 +85,19 @@ class FilterWidget(QWidget):
                 self.debug(f"min: {minimum} max: {maximum}")
                 self.filter_widget.setRange(minimum, maximum)  # noqa # pyright: ignore[reportUnknownArgumentType]
                 self.filter_widget.setValue((minimum, maximum))
-                self.filter_widget.setEdgeLabelMode(
-                    QLabeledDoubleRangeSlider.EdgeLabelMode.LabelIsValue
-                )
+                self.filter_widget._min_label.setMaximumWidth(40)
+                self.filter_widget._max_label.setMaximumWidth(40)
+                # self.filter_widget.setEdgeLabelMode(
+                #     QLabeledDoubleRangeSlider.EdgeLabelMode.LabelIsValue
+                # )
                 _ = self.filter_widget.valueChanged.connect(self.on_numeric_change)
                 self.filterstore = FilterStore(self.dtype, (minimum, maximum))  # pyright: ignore[reportUnknownArgumentType]
                 build_layout(
                     self._layout, [header_layout, self.filter_widget, delete_button]
                 )
+                # TODO: Figure out a better workaround for this code.
+                self.filter_widget._min_label.editingFinished.emit()
+                self.filter_widget._max_label.editingFinished.emit()
             case Dtype.CATEGORICAL:
                 self.filter_widget = MultiSelectComboBox()
                 self.filter_widget.addItems(  # pyright: ignore[reportUnknownMemberType]
