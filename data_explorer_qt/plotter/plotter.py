@@ -352,6 +352,7 @@ class HistDialog(PlottingDialog):
     rugplot: bool = False
     legend: bool = True
     cbar: bool = False
+    plot_palette: str | None = None
     swap_xy: bool = False
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore"):
@@ -524,6 +525,11 @@ class HistDialog(PlottingDialog):
         else:
             self.n_cols = None
 
+        if self.hue_column is not None:
+            self.plot_palette = self.get_palette()
+        else:
+            self.plot_palette = None
+
         if self.bin_width.isChecked():
             string = self.bin_width_line_edit.text()
             try:
@@ -566,7 +572,7 @@ class HistDialog(PlottingDialog):
                     rug=self.rugplot,
                     log_scale=(self.log_x, self.log_y),
                     legend=self.legend,
-                    palette=self.get_palette(),
+                    palette=self.plot_palette,
                     stat=self.plot_statistic,
                     element=self.element,
                     bins=self.bins,
@@ -585,7 +591,7 @@ class HistDialog(PlottingDialog):
                     rug=self.rugplot,
                     log_scale=(self.log_x, self.log_y),
                     legend=self.legend,
-                    palette=self.get_palette(),
+                    palette=self.plot_palette,
                     stat=self.plot_statistic,
                     alpha=self.alpha,
                     cbar=self.cbar,
@@ -600,15 +606,6 @@ class HistDialog(PlottingDialog):
             **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
         )
         return fg
-
-    @typing.override
-    def plot(self):
-        self.on_plot()
-        try:
-            facetgrid = self.plotter()
-            facetgrid.figure.show()
-        except Exception:
-            self.error("Unable to plot. Err: " + traceback.format_exc())
 
     @typing.override
     def dynamic_plot(self):
@@ -676,6 +673,7 @@ class ScatterDialog(PlottingDialog):
     alpha: float = 1.0
     marker: str = MARKERS[1]
     plot_mode = ScatterPlotMode.RELPLOT
+    plot_palette: None | str = None
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore"):
         super().__init__(dataexplorer, datastore, "Scatter")
@@ -882,6 +880,11 @@ class ScatterDialog(PlottingDialog):
         else:
             self.n_cols = None
 
+        if self.hue_column is not None:
+            self.plot_palette = self.get_palette()
+        else:
+            self.plot_palette = None
+
     def plotter(self) -> Figure | sns.FacetGrid:
         self.debug(str(self.plot_mode))
         match self.plot_mode:
@@ -896,7 +899,7 @@ class ScatterDialog(PlottingDialog):
                     row=self.row_column,
                     col=self.col_column,
                     col_wrap=self.n_cols,
-                    palette=self.get_palette(),
+                    palette=self.plot_palette,
                     alpha=self.alpha,
                 )
                 if self.log_x:
@@ -1073,20 +1076,6 @@ class ScatterDialog(PlottingDialog):
         return fig
 
     @typing.override
-    def plot(self):
-        self.on_plot()
-        if self.plot_mode == ScatterPlotMode.INVALID:
-            return
-        try:
-            facetgrid = self.plotter()
-            if isinstance(facetgrid, Figure):
-                facetgrid.show()
-            else:
-                facetgrid.figure.show()
-        except Exception:
-            self.error("Unable to plot. Err: " + traceback.format_exc())
-
-    @typing.override
     def dynamic_plot(self):
         if self.dynamic_plot_widget is None:
             self.dynamic_plot_widget = EmbeddedDynamicPlot(
@@ -1150,6 +1139,7 @@ class CatPlotDialog(PlottingDialog):
     n_cols: int | None = None
     legend: bool = True
     swap_xy: bool = False
+    plot_palette: str | None = None
     kwargs: dict[str, typing.Any] = {}
     settings_widgets: dict[CatPlotMode, QWidget] = {}
 
@@ -1766,6 +1756,10 @@ class CatPlotDialog(PlottingDialog):
             )
         else:
             self.n_cols = None
+        if self.hue_column is not None:
+            self.plot_palette = self.get_palette()
+        else:
+            self.plot_palette = None
 
         if self.swap_xy:
             self.x_column, self.y_column = self.y_column, self.x_column
@@ -1807,7 +1801,7 @@ class CatPlotDialog(PlottingDialog):
             col_wrap=self.n_cols,
             log_scale=(self.log_x, self.log_y),
             legend=self.legend,
-            palette=self.get_palette(),
+            palette=self.plot_palette,
             **self.kwargs,  
         )
         for ax in fg.axes.flatten():
@@ -1819,15 +1813,6 @@ class CatPlotDialog(PlottingDialog):
             **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
         )
         return fg
-
-    @typing.override
-    def plot(self):
-        self.on_plot()
-        try:
-            facetgrid = self.plotter()
-            facetgrid.figure.show()
-        except Exception:
-            self.error("Unable to plot. Err: " + traceback.format_exc())
 
     @typing.override
     def dynamic_plot(self):
@@ -1884,6 +1869,7 @@ class CountPlotDialog(PlottingDialog):
     gap: float = 0.0
     alpha: float = 1.0
     saturation: float = 0.75
+    plot_palette: None | str = None
     plot_statistic = "count"
     swap_xy: bool = False
 
@@ -2037,6 +2023,10 @@ class CountPlotDialog(PlottingDialog):
             )
         else:
             self.n_cols = None
+        if self.hue_column is not None:
+            self.plot_palette = self.get_palette()
+        else:
+            self.plot_palette = None
 
         if self.swap_xy:
             self.x_column, self.y_column = self.y_column, self.x_column
@@ -2061,7 +2051,7 @@ class CountPlotDialog(PlottingDialog):
             col_wrap=self.n_cols,
             log_scale=(self.log_x, self.log_y),
             legend=self.legend,
-            palette=self.get_palette(),
+            palette=self.plot_palette,
             stat=self.plot_statistic,
             gap=self.gap,
             dodge=self.dodge,
@@ -2078,15 +2068,6 @@ class CountPlotDialog(PlottingDialog):
             **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
         )
         return fg
-
-    @typing.override
-    def plot(self):
-        self.on_plot()
-        try:
-            facetgrid = self.plotter()
-            facetgrid.figure.show()
-        except Exception:
-            self.error("Unable to plot. Err: " + traceback.format_exc())
 
     @typing.override
     def dynamic_plot(self):
@@ -2267,6 +2248,8 @@ class CorrPlotDialog(PlottingDialog):
         self.debug(f"{self.vmin} {self.vmax}")
 
     def plotter(self) -> Figure:
+        if len(self.variable_columns) == 0:
+            return plt.figure()
         fig = plt.figure()
         _ = sns.heatmap(
             self.plotting_data,
@@ -2283,14 +2266,6 @@ class CorrPlotDialog(PlottingDialog):
             **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
         )
         return fig
-
-    @typing.override
-    def plot(self):
-        self.on_plot()
-        try:
-            self.plotter().show()
-        except Exception:
-            self.error("Unable to plot. Err: " + traceback.format_exc())
 
     @typing.override
     def dynamic_plot(self):
@@ -2358,6 +2333,7 @@ class LineDialog(PlottingDialog):
     marker: str = MARKERS[0]
     linestyle: str = LINE_STYLES[0]
     plot_mode = LinePlotMode.RELPLOT
+    plot_palette: None | str = None
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore"):
         super().__init__(dataexplorer, datastore, "Line")
@@ -2550,7 +2526,10 @@ class LineDialog(PlottingDialog):
             )
         else:
             self.n_cols = None
-
+        if self.hue_column is not None:
+            self.plot_palette = self.get_palette()
+        else:
+            self.plot_palette = None
 
     def plotter(self) -> Figure | sns.FacetGrid:
         self.debug(str(self.plot_mode))
@@ -2566,7 +2545,7 @@ class LineDialog(PlottingDialog):
                     row=self.row_column,
                     col=self.col_column,
                     col_wrap=self.n_cols,
-                    palette=self.get_palette(),
+                    palette=self.plot_palette,
                     kind="line",
                     alpha=self.alpha,
                 )
@@ -2702,20 +2681,6 @@ class LineDialog(PlottingDialog):
         return fig
 
     @typing.override
-    def plot(self):
-        self.on_plot()
-        if self.plot_mode == LinePlotMode.INVALID:
-            return
-        try:
-            facetgrid = self.plotter()
-            if isinstance(facetgrid, Figure):
-                facetgrid.show()
-            else:
-                facetgrid.figure.show()
-        except Exception:
-            self.error("Unable to plot. Err: " + traceback.format_exc())
-
-    @typing.override
     def dynamic_plot(self):
         if self.dynamic_plot_widget is None:
             self.dynamic_plot_widget = EmbeddedDynamicPlot(
@@ -2759,6 +2724,7 @@ class LineDialog(PlottingDialog):
 class RegressionPlotMode(Enum):
     SINGLE_X = auto()
     MULTIPLE_X = auto()
+    INVALID = auto()
 
 
 @typing.final
@@ -2770,7 +2736,7 @@ class RegressionDialog(PlottingDialog):
     add_constant: bool = False
     marker: str = MARKERS[1]
     linestyle: str = LINE_STYLES[0]
-    plot_mode: RegressionPlotMode = RegressionPlotMode.SINGLE_X
+    plot_mode: RegressionPlotMode = RegressionPlotMode.INVALID
     regression_results = None
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore"):
@@ -2873,6 +2839,7 @@ class RegressionDialog(PlottingDialog):
     @typing.override
     def on_plot(self):
         super().on_plot()
+        self.plot_mode = RegressionPlotMode.INVALID
         self.x_columns = self.x_columns_combobox.currentData()
         self.y_column = self.y_column_combobox.currentText()
 
@@ -2907,14 +2874,13 @@ class RegressionDialog(PlottingDialog):
             self.debug(traceback.format_exc())
             self.regression_summary_text.setText("Unsuccessful")
             self.regression_results = None
+            self.plot_mode = RegressionPlotMode.INVALID
 
     def plotter(self) -> Figure:
         self.debug(str(self.plot_mode))
-        if not isinstance(self.regression_results, RegressionResultsWrapper):
-            self.error("Issue Fitting Data")
-            return plt.figure()
         match self.plot_mode:
             case RegressionPlotMode.SINGLE_X:
+                assert isinstance(self.regression_results, RegressionResultsWrapper)
                 fig, ax = plt.subplots()
                 ax.scatter(self.plotting_data[self.x_column],
                         self.plotting_data[self.y_column],
@@ -2941,6 +2907,7 @@ class RegressionDialog(PlottingDialog):
                 )
                 return fig
             case RegressionPlotMode.MULTIPLE_X:
+                assert isinstance(self.regression_results, RegressionResultsWrapper)
                 fig, ax = plt.subplots()
                 ax.scatter(self.plotting_data[self.y_column],
                         self.regression_results.resid,
@@ -2959,19 +2926,8 @@ class RegressionDialog(PlottingDialog):
                     **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
                 )
                 return fig
-
-
-    @typing.override
-    def plot(self):
-        self.on_plot()
-        try:
-            facetgrid = self.plotter()
-            if isinstance(facetgrid, Figure):
-                facetgrid.show()
-            else:
-                facetgrid.figure.show()
-        except Exception:
-            self.error("Unable to plot. Err: " + traceback.format_exc())
+            case RegressionPlotMode.INVALID:
+                return plt.figure()
 
     @typing.override
     def dynamic_plot(self):

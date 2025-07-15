@@ -1,6 +1,7 @@
 # pyright: reportUnknownMemberType=false
 import typing
 from typing import Callable, Literal, override
+import traceback
 import pprint
 from dataclasses import dataclass
 
@@ -166,6 +167,8 @@ class EmbeddedDynamicPlot(QWidget):
             self.figure = plot.figure
 
         plt.close(old_figure)
+        old_plot.close()
+        old_toolbar.close()
         self.plot = FigureCanvas(self.figure)
         self.plot_toolbar = NavigationToolbar2QT(self.plot)
 
@@ -173,9 +176,7 @@ class EmbeddedDynamicPlot(QWidget):
         self.plot_vbox = QVBoxLayout(self.plot_subwidget)
         build_layout(self.plot_vbox, [self.plot_toolbar, self.plot])
         _ = self._layout.replaceWidget(old_plot_subwidget, self.plot_subwidget)
-        old_plot.deleteLater()
-        old_toolbar.deleteLater()
-        old_plot_subwidget.deleteLater()
+        old_plot_subwidget.close()
         self.update()
         self.debug(f"{self.name} updated!")
 
@@ -269,7 +270,20 @@ class PlottingDialog(QWidget):
     def on_plot(self):
         self._generate_plotting_data()
 
-    def plot(self): ...
+    def plotter(self) -> Figure | FacetGrid: ...
+
+    def plot(self):
+        self.on_plot()
+        try:
+            fig_or_fg = self.plotter()
+            if isinstance(fig_or_fg, Figure):
+                fig_or_fg.show()
+            else:
+                fig_or_fg.figure.show()
+        except TimeoutError:
+            self.error("Plot took too long. Check your variables")
+        except Exception:
+            self.error("Unable to plot. Err: " + traceback.format_exc())
 
     def dynamic_plot(self): ...
 

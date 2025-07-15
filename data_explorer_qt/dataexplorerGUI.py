@@ -383,13 +383,13 @@ class DataExplorerGUI(FramelessMainWindow):
             lambda: self.dataexplorer.plotter.correlmatrix_plotter()
         )
 
-        regression_plot_button = QPushButton("Regression Plot")
+        regression_plot_button = QPushButton("Regression")
         _ = regression_plot_button.clicked.connect(
                 lambda: self.dataexplorer.plotter.regression_plotter()
         )
 
-        joint_grid_button = QPushButton("Joint Grid Plot")
-        _ = joint_grid_button.clicked.connect(
+        pair_grid_button = QPushButton("Pair Grid")
+        _ = pair_grid_button.clicked.connect(
                 lambda: self._not_implemented()
                 )
 
@@ -399,7 +399,7 @@ class DataExplorerGUI(FramelessMainWindow):
                 [histogram_button, scatter_plot_button],
                 [line_plot_button, categorical_plot_button],
                 [count_plot_button, correl_matrix],
-                [regression_plot_button, joint_grid_button],
+                [regression_plot_button, pair_grid_button],
             ],
         )
 

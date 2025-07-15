@@ -58,16 +58,18 @@ class DataExplorer:
 
         self._logger = logging.getLogger("DataExplorer")
         self._logger.propagate = False
+        self._logger.setLevel(logging.DEBUG)
 
         log_format = logging.Formatter(self.config["Logger"]["log_format"])
         console = logging.StreamHandler(sys.stdout)
         console.setFormatter(log_format)
         file = logging.FileHandler(log_file_path)
         file.setFormatter(log_format)
+        file.setLevel(logging.DEBUG)
         if self.debug_mode:
-            self._logger.setLevel(logging.DEBUG)
+            console.setLevel(logging.DEBUG)
         else:
-            self._logger.setLevel(logging.INFO)
+            console.setLevel(logging.INFO)
         self._logger.addHandler(console)
         self._logger.addHandler(file)
         self._logger.info("Logger Setup!")
