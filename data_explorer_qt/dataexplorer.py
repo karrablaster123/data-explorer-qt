@@ -101,7 +101,7 @@ class DataExplorer:
     def construct_plugin_list(self):
         plugin_path: str = self.config["General"]["plugins"]
         if not Path(plugin_path).exists():
-            self.info("Plugin Path is invalid.")
+            self.debug("Plugin Path is invalid.")
             plugin_path_ = Path(__file__).parent.parent / "plugins"
             if not plugin_path_.exists():
                 return

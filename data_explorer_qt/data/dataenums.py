@@ -11,22 +11,22 @@ VALID_DTYPES = [
 
 NAN_NUM = [
     "Replace with 0",
-    "Drop Rows",
-    "Keep as NaN",
+    "Drop rows",
+    "Keep empty",
 ]
 NAN_CAT = [
-    "Replace with No Data",
-    "Drop Rows",
-    "Keep as NaN",
+    "Replace with no data",
+    "Drop rows",
+    "Keep empty",
 ]
 NAN_DATETIME = [
-    "Drop Rows",
-    "Keep as NaN",
+    "Drop rows",
+    "Keep empty",
 ]
 NAN_OPS = list(dict.fromkeys(NAN_NUM + NAN_CAT + NAN_DATETIME))
 
 NUM_TO_CAT_OPS = [
-    "As Category",
+    "As category",
     "Into n equal bins",
     "Bin by widths",
 ]

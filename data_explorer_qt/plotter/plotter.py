@@ -346,7 +346,7 @@ class HistDialog(PlottingDialog):
     n_bins: int = 10
     element: str = "step"
     plot_statistic = "count"
-    bins: str | list[float] | int = "auto"
+    bins: str | list[float] | int | list[list[float]] = "auto"
     n_cols: int | None = None
     fill: bool = True
     rugplot: bool = False
@@ -408,8 +408,9 @@ class HistDialog(PlottingDialog):
         self.bin_width = QRadioButton("Manually set bin widths")
         self.bin_width_line_edit = QLineEdit()
         self.bin_width_line_edit.setPlaceholderText(
-            "Comma-separated list of values: 1, 2, 3"
+                "1, 2, 3, ... if only variable is set. If Y-variable is also set: 1, 2, 3, ...; 10, 20, 30, ..."
         )
+        self.bin_width_line_edit.setToolTip("For one variable histogram, use a comma-separated list of values.\nFor two variable histograms, separate the two comma-separated lists by a semicolon.")
 
         build_layout_with_callbacks(
             radio_layout,
@@ -533,7 +534,10 @@ class HistDialog(PlottingDialog):
         if self.bin_width.isChecked():
             string = self.bin_width_line_edit.text()
             try:
-                list_floats: list[float] = [float(val) for val in string.split(",")]
+                if ";" in string:
+                    list_floats: list[list[float]] | list[float] = [[float(val) for val in axis_bins.split(",")] for axis_bins in string.split(";")]
+                else:
+                    list_floats: list[float] | list[list[float]] = [float(val) for val in string.split(",")]
             except Exception:
                 self.error(
                     "The formatting for bin widths is incorrect. Please check it."
@@ -593,6 +597,7 @@ class HistDialog(PlottingDialog):
                     legend=self.legend,
                     palette=self.plot_palette,
                     stat=self.plot_statistic,
+                    bins=self.bins,
                     alpha=self.alpha,
                     cbar=self.cbar,
                 )

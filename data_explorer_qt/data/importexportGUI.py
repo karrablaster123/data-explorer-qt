@@ -97,7 +97,7 @@ class DataImporter:
             label = QLabel(column)  # pyright: ignore[reportUnknownArgumentType]
             scroll_area_layout.addWidget(label, self._row(i), self._col(i))
         build_layout(scroll_area_vbox, [column_label, scroll_area_layout])
-        nan_label = QLabel("Default NaN Handling")
+        nan_label = QLabel("Default operation for missing values")
 
         nan_hbox = QHBoxLayout()
         nan_hbox.setSpacing(5)
@@ -127,11 +127,11 @@ class DataImporter:
         self.default_nan_numeric.addItems(NAN_NUM)
         self.default_nan_datetime.addItems(NAN_DATETIME)
 
-        continue_button = QPushButton("Continue to set dtype")
+        continue_button = QPushButton("Continue to set column data types")
         _ = continue_button.clicked.connect(self._set_dtypes)
 
         self.default_custom_radio_button = (
-            QRadioButton("Handle missing values by dtype using defaults"),
+            QRadioButton("Handle missing values by column data type using defaults (defaults set above)"),
             QRadioButton("Handle missing values on a per-column basis"),
         )
         self.default_custom_radio_button[1].setChecked(True)
