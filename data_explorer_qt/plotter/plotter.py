@@ -408,9 +408,11 @@ class HistDialog(PlottingDialog):
         self.bin_width = QRadioButton("Manually set bin widths")
         self.bin_width_line_edit = QLineEdit()
         self.bin_width_line_edit.setPlaceholderText(
-                "1, 2, 3, ... if only variable is set. If Y-variable is also set: 1, 2, 3, ...; 10, 20, 30, ..."
+            "1, 2, 3, ... if only variable is set. If Y-variable is also set: 1, 2, 3, ...; 10, 20, 30, ..."
         )
-        self.bin_width_line_edit.setToolTip("For one variable histogram, use a comma-separated list of values.\nFor two variable histograms, separate the two comma-separated lists by a semicolon.")
+        self.bin_width_line_edit.setToolTip(
+            "For one variable histogram, use a comma-separated list of values.\nFor two variable histograms, separate the two comma-separated lists by a semicolon."
+        )
 
         build_layout_with_callbacks(
             radio_layout,
@@ -521,7 +523,7 @@ class HistDialog(PlottingDialog):
         if self.col_column is not None and self.row_column is None:
             self.n_cols = min(
                 self.n_cols_spinbox.value(),
-                len(self.plotting_data[self.col_column].unique()),  
+                len(self.plotting_data[self.col_column].unique()),
             )
         else:
             self.n_cols = None
@@ -535,9 +537,14 @@ class HistDialog(PlottingDialog):
             string = self.bin_width_line_edit.text()
             try:
                 if ";" in string:
-                    list_floats: list[list[float]] | list[float] = [[float(val) for val in axis_bins.split(",")] for axis_bins in string.split(";")]
+                    list_floats: list[list[float]] | list[float] = [
+                        [float(val) for val in axis_bins.split(",")]
+                        for axis_bins in string.split(";")
+                    ]
                 else:
-                    list_floats: list[float] | list[list[float]] = [float(val) for val in string.split(",")]
+                    list_floats: list[float] | list[list[float]] = [
+                        float(val) for val in string.split(",")
+                    ]
             except Exception:
                 self.error(
                     "The formatting for bin widths is incorrect. Please check it."
@@ -880,7 +887,7 @@ class ScatterDialog(PlottingDialog):
         if self.col_column is not None and self.row_column is None:
             self.n_cols = min(
                 self.n_cols_spinbox.value(),
-                len(self.plotting_data[self.col_column].unique()),  
+                len(self.plotting_data[self.col_column].unique()),
             )
         else:
             self.n_cols = None
@@ -938,9 +945,9 @@ class ScatterDialog(PlottingDialog):
     def _single_y_colorbar(self) -> Figure:
         fig, ax = plt.subplots()
         im = ax.scatter(
-            self.plotting_data[self.x_column],  
-            self.plotting_data[self.y_column],  
-            c=self.plotting_data[self.colorbar_column],  
+            self.plotting_data[self.x_column],
+            self.plotting_data[self.y_column],
+            c=self.plotting_data[self.colorbar_column],
             marker=self.marker,
             alpha=self.alpha,
         )
@@ -983,7 +990,7 @@ class ScatterDialog(PlottingDialog):
             im = ax.scatter(
                 self.plotting_data[self.x_column],
                 self.plotting_data[y_col],
-                c=c,  
+                c=c,
                 marker=self.marker,
                 alpha=self.alpha,
             )
@@ -1002,7 +1009,9 @@ class ScatterDialog(PlottingDialog):
             )
             if mode_colorbar:
                 _ = fig.colorbar(im, ax=ax, label=self.colorbar_column)
-                _ = ax.set_title(f"{y_col} vs {self.x_column}; Color: {self.colorbar_column}")
+                _ = ax.set_title(
+                    f"{y_col} vs {self.x_column}; Color: {self.colorbar_column}"
+                )
             else:
                 _ = ax.set_title(f"{y_col} vs {self.x_column}")
 
@@ -1012,8 +1021,8 @@ class ScatterDialog(PlottingDialog):
         fig, ax = plt.subplots()
         for y_col in self.y_columns:
             _ = ax.scatter(
-                self.plotting_data[self.x_column],  
-                self.plotting_data[y_col],  
+                self.plotting_data[self.x_column],
+                self.plotting_data[y_col],
                 label=y_col,
                 marker=self.marker,
                 alpha=self.alpha,
@@ -1053,8 +1062,8 @@ class ScatterDialog(PlottingDialog):
             if loc != 0:
                 axis.spines.right.set_position(("axes", loc))
             _ = axis.scatter(
-                self.plotting_data[self.x_column],  
-                self.plotting_data[y_col],  
+                self.plotting_data[self.x_column],
+                self.plotting_data[y_col],
                 c=color,
                 marker=self.marker,
                 alpha=self.alpha,
@@ -1292,7 +1301,7 @@ class CatPlotDialog(PlottingDialog):
         layout = QVBoxLayout(widget)
         self.swarm_marker_combobox = QComboBox()
         self.swarm_marker_combobox.addItems(MARKERS)
-        self.swarm_marker_combobox.setCurrentIndex(1) # 0 is empty. 
+        self.swarm_marker_combobox.setCurrentIndex(1)  # 0 is empty.
         swarm_marker_combobox = get_label_widget_row_callback(
             "Marker:", self.swarm_marker_combobox, self.on_widget_change
         )
@@ -1329,7 +1338,7 @@ class CatPlotDialog(PlottingDialog):
         layout = QVBoxLayout(widget)
         self.strip_marker_combobox = QComboBox()
         self.strip_marker_combobox.addItems(MARKERS)
-        self.strip_marker_combobox.setCurrentIndex(1) # 0 is empty. 
+        self.strip_marker_combobox.setCurrentIndex(1)  # 0 is empty.
         strip_marker_combobox = get_label_widget_row_callback(
             "Marker:", self.strip_marker_combobox, self.on_widget_change
         )
@@ -1757,7 +1766,7 @@ class CatPlotDialog(PlottingDialog):
         if self.col_column is not None and self.row_column is None:
             self.n_cols = min(
                 self.n_cols_spinbox.value(),
-                len(self.plotting_data[self.col_column].unique()),  
+                len(self.plotting_data[self.col_column].unique()),
             )
         else:
             self.n_cols = None
@@ -1807,7 +1816,7 @@ class CatPlotDialog(PlottingDialog):
             log_scale=(self.log_x, self.log_y),
             legend=self.legend,
             palette=self.plot_palette,
-            **self.kwargs,  
+            **self.kwargs,
         )
         for ax in fg.axes.flatten():
             ax.grid()
@@ -2024,7 +2033,7 @@ class CountPlotDialog(PlottingDialog):
         if self.col_column is not None and self.row_column is None:
             self.n_cols = min(
                 self.n_cols_spinbox.value(),
-                len(self.plotting_data[self.col_column].unique()),  
+                len(self.plotting_data[self.col_column].unique()),
             )
         else:
             self.n_cols = None
@@ -2213,7 +2222,7 @@ class CorrPlotDialog(PlottingDialog):
     @typing.override
     def on_plot(self):
         super().on_plot()
-        self.plotting_data = self.plotting_data[  
+        self.plotting_data = self.plotting_data[
             self.datastore.numeric_columns + self.datastore.datetime_columns
         ]
         self.variable_columns = self.variable_columns_combobox.currentData()
@@ -2235,12 +2244,12 @@ class CorrPlotDialog(PlottingDialog):
 
         if len(self.y_columns) > 0:
             self.plotting_data = self.plotting_data.corr(self.correl_statistic)
-            self.plotting_data = self.plotting_data[  
+            self.plotting_data = self.plotting_data[
                 self.plotting_data.index.isin(self.y_columns)
             ]
-            self.plotting_data = self.plotting_data[self.variable_columns]  
+            self.plotting_data = self.plotting_data[self.variable_columns]
         else:
-            self.plotting_data = self.plotting_data[self.variable_columns].corr(  
+            self.plotting_data = self.plotting_data[self.variable_columns].corr(
                 self.correl_statistic
             )
 
@@ -2527,7 +2536,7 @@ class LineDialog(PlottingDialog):
         if self.col_column is not None and self.row_column is None:
             self.n_cols = min(
                 self.n_cols_spinbox.value(),
-                len(self.plotting_data[self.col_column].unique()),  
+                len(self.plotting_data[self.col_column].unique()),
             )
         else:
             self.n_cols = None
@@ -2584,17 +2593,17 @@ class LineDialog(PlottingDialog):
         if self.n_cols is None:
             self.n_cols = 5
         n_rows = ceil(len(self.y_columns) / self.n_cols)
-        fig, axs = plt.subplots(nrows=n_rows, ncols=self.n_cols, sharex=True)  
+        fig, axs = plt.subplots(nrows=n_rows, ncols=self.n_cols, sharex=True)
         assert isinstance(axs, ndarray)
         axs = axs.flatten()
 
-        for ax, y_col in zip(axs, self.y_columns):  
+        for ax, y_col in zip(axs, self.y_columns):
             if not isinstance(ax, Axes):
                 self.error("Not an axis instance (subplots)")
                 return fig
             _ = ax.plot(
-                self.plotting_data[self.x_column],  
-                self.plotting_data[y_col],  
+                self.plotting_data[self.x_column],
+                self.plotting_data[y_col],
                 marker=self.marker,
                 linestyle=self.linestyle,
                 alpha=self.alpha,
@@ -2618,8 +2627,8 @@ class LineDialog(PlottingDialog):
         fig, ax = plt.subplots()
         for y_col in self.y_columns:
             _ = ax.plot(
-                self.plotting_data[self.x_column],  
-                self.plotting_data[y_col],  
+                self.plotting_data[self.x_column],
+                self.plotting_data[y_col],
                 label=y_col,
                 marker=self.marker,
                 linestyle=self.linestyle,
@@ -2659,8 +2668,8 @@ class LineDialog(PlottingDialog):
             if loc != 0:
                 axis.spines.right.set_position(("axes", loc))
             _ = axis.plot(
-                self.plotting_data[self.x_column],  
-                self.plotting_data[y_col],  
+                self.plotting_data[self.x_column],
+                self.plotting_data[y_col],
                 c=color,
                 marker=self.marker,
                 linestyle=self.linestyle,
@@ -2746,7 +2755,7 @@ class RegressionDialog(PlottingDialog):
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore"):
         super().__init__(dataexplorer, datastore, "Regression")
-        self.resize(800,800)
+        self.resize(800, 800)
 
         get_label_widget_row_ = partial(
             get_label_widget_row_callback, callback=self.on_widget_change
@@ -2756,8 +2765,10 @@ class RegressionDialog(PlottingDialog):
         x_columns_combobox = get_label_widget_row_(
             "X Axis Variable", self.x_columns_combobox
         )
-        self.x_columns_combobox.setToolTip("Single Selection will produce a Y~X plot.\n"
-                                          "Multiple Selections will produce a residual plot")
+        self.x_columns_combobox.setToolTip(
+            "Single Selection will produce a Y~X plot.\n"
+            "Multiple Selections will produce a residual plot"
+        )
         self.y_column_combobox = self.setup_column_combobox(True)
         y_column_combobox = get_label_widget_row_(
             "Y Axis Variables", self.y_column_combobox
@@ -2806,7 +2817,7 @@ class RegressionDialog(PlottingDialog):
         _ = plot_button.clicked.connect(self.plot)
         dynamic_plot_button = QPushButton("Dynamic Plot")
         _ = dynamic_plot_button.clicked.connect(self.dynamic_plot)
-        
+
         self.regression_summary_title = QLabel("Regression Summary")
         self.regression_summary_title.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         self.regression_summary_text = QTextEdit()
@@ -2823,7 +2834,7 @@ class RegressionDialog(PlottingDialog):
                 [plot_button, dynamic_plot_button],
                 [bot_spacer],
                 [self.regression_summary_title],
-                [self.regression_summary_text]
+                [self.regression_summary_text],
             ],
             self.on_widget_change,
         )
@@ -2887,48 +2898,66 @@ class RegressionDialog(PlottingDialog):
             case RegressionPlotMode.SINGLE_X:
                 assert isinstance(self.regression_results, RegressionResultsWrapper)
                 fig, ax = plt.subplots()
-                ax.scatter(self.plotting_data[self.x_column],
-                        self.plotting_data[self.y_column],
-                        marker=self.marker,
-                        c="b",
-                        label="Data",
-                        alpha=self.alpha)
-                ax.plot(self.plotting_data[self.x_column],
-                        self.regression_results.fittedvalues,
-                        linestyle=self.linestyle,
-                        c="orange",
-                        label="Regression Line",
-                        alpha=self.alpha)
+                ax.scatter(
+                    self.plotting_data[self.x_column],
+                    self.plotting_data[self.y_column],
+                    marker=self.marker,
+                    c="b",
+                    label="Data",
+                    alpha=self.alpha,
+                )
+                ax.plot(
+                    self.plotting_data[self.x_column],
+                    self.regression_results.fittedvalues,
+                    linestyle=self.linestyle,
+                    c="orange",
+                    label="Regression Line",
+                    alpha=self.alpha,
+                )
                 ax.set_xlabel(f"{self.x_column}")
                 ax.set_ylabel(f"{self.y_column}")
                 ax.legend()
-                ax.set_title(f"{self.y_column} vs {self.x_column}; R^2: {self.regression_results.rsquared:.3f}")
+                ax.set_title(
+                    f"{self.y_column} vs {self.x_column}; R^2: {self.regression_results.rsquared:.3f}"
+                )
                 ax.grid(True)
                 ax.tick_params(
-                    **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
+                    **self.dataexplorer.plotter.plot_params["tick_params"][
+                        "x"
+                    ].to_kwargs()
                 )
                 ax.tick_params(
-                    **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
+                    **self.dataexplorer.plotter.plot_params["tick_params"][
+                        "y"
+                    ].to_kwargs()
                 )
                 return fig
             case RegressionPlotMode.MULTIPLE_X:
                 assert isinstance(self.regression_results, RegressionResultsWrapper)
                 fig, ax = plt.subplots()
-                ax.scatter(self.plotting_data[self.y_column],
-                        self.regression_results.resid,
-                        marker=self.marker,
-                        label="Residuals",
-                        alpha=self.alpha)
+                ax.scatter(
+                    self.plotting_data[self.y_column],
+                    self.regression_results.resid,
+                    marker=self.marker,
+                    label="Residuals",
+                    alpha=self.alpha,
+                )
                 ax.set_xlabel(f"{self.y_column}")
                 ax.set_ylabel("Residuals")
                 ax.legend()
-                ax.set_title(f"Residuals vs {self.y_column}; R^2: {self.regression_results.rsquared:.3f}")
+                ax.set_title(
+                    f"Residuals vs {self.y_column}; R^2: {self.regression_results.rsquared:.3f}"
+                )
                 ax.grid(True)
                 ax.tick_params(
-                    **self.dataexplorer.plotter.plot_params["tick_params"]["x"].to_kwargs()
+                    **self.dataexplorer.plotter.plot_params["tick_params"][
+                        "x"
+                    ].to_kwargs()
                 )
                 ax.tick_params(
-                    **self.dataexplorer.plotter.plot_params["tick_params"]["y"].to_kwargs()
+                    **self.dataexplorer.plotter.plot_params["tick_params"][
+                        "y"
+                    ].to_kwargs()
                 )
                 return fig
             case RegressionPlotMode.INVALID:

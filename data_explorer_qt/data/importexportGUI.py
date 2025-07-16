@@ -131,7 +131,9 @@ class DataImporter:
         _ = continue_button.clicked.connect(self._set_dtypes)
 
         self.default_custom_radio_button = (
-            QRadioButton("Handle missing values by column data type using defaults (defaults set above)"),
+            QRadioButton(
+                "Handle missing values by column data type using defaults (defaults set above)"
+            ),
             QRadioButton("Handle missing values on a per-column basis"),
         )
         self.default_custom_radio_button[1].setChecked(True)

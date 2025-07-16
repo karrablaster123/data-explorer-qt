@@ -385,13 +385,11 @@ class DataExplorerGUI(FramelessMainWindow):
 
         regression_plot_button = QPushButton("Regression")
         _ = regression_plot_button.clicked.connect(
-                lambda: self.dataexplorer.plotter.regression_plotter()
+            lambda: self.dataexplorer.plotter.regression_plotter()
         )
 
         pair_grid_button = QPushButton("Pair Grid")
-        _ = pair_grid_button.clicked.connect(
-                lambda: self._not_implemented()
-                )
+        _ = pair_grid_button.clicked.connect(lambda: self._not_implemented())
 
         build_grid_layout(
             plotting_page_layout,
