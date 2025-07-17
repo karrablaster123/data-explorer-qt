@@ -263,6 +263,8 @@ class DataExplorerGUI(FramelessMainWindow):
         view_data_button = QPushButton("View Dataset")
         _ = view_data_button.clicked.connect(self._view_data)
 
+        view_data_statistics_button = QPushButton("View Data Statistics")
+        _ = view_data_statistics_button.clicked.connect(self._view_data_statistics)
         widg_list = [
             top_spacer,
             import_button,
@@ -275,6 +277,8 @@ class DataExplorerGUI(FramelessMainWindow):
             export_data_button,
             bottom_spacer,
             view_data_button,
+            bottom_spacer,
+            view_data_statistics_button,
         ]
 
         build_layout(manage_data_page_layout, widg_list)
@@ -290,6 +294,18 @@ class DataExplorerGUI(FramelessMainWindow):
         if active is None:
             self.write_to_status_bar("No Active Data to view")
         else:
+            self.table_viewer = TableViewer(self.dataexplorer, active, datamodel.active)
+
+    def _view_data_statistics(self):
+        datamodel: DataModel = self.dataexplorer.datamodel
+        if self.filter_viewexport_checkbox.isChecked():
+            active = datamodel.active_filtered_data
+        else:
+            active = datamodel.active_cleaned_data
+        if active is None:
+            self.write_to_status_bar("No Active Data to view")
+        else:
+            active = active.describe(include="all")
             self.table_viewer = TableViewer(self.dataexplorer, active, datamodel.active)
 
     def _on_import_data_from_file(self):
