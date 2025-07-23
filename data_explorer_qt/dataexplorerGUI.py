@@ -126,13 +126,13 @@ class DataExplorerGUI(FramelessMainWindow):
         _ = self.nav_button2.clicked.connect(f)
         idx += 1
 
-        self.nav_button3 = QPushButton("Plot Data")
+        self.nav_button3 = QPushButton("Convert Numeric to Categorical")
         self.nav_button3.setCheckable(True)
         f = partial(self.switch_content_page, index=idx)
         _ = self.nav_button3.clicked.connect(f)
         idx += 1
 
-        self.nav_button4 = QPushButton("Numerical to Categorical Rules")
+        self.nav_button4 = QPushButton("Plot Data")
         self.nav_button4.setCheckable(True)
         f = partial(self.switch_content_page, index=idx)
         _ = self.nav_button4.clicked.connect(f)
@@ -184,11 +184,11 @@ class DataExplorerGUI(FramelessMainWindow):
         # Page 2: Filtering
         self.pages.append(self._filter_data_page())
 
-        # Page 3: Plotting
-        self.pages.append(self._plotting_page())
-
-        # Page 4: Numeric -> Categorical
+        # Page 3: Numeric -> Categorical
         self.pages.append(self._num_to_cat_page())
+
+        # Page 4: Plotting
+        self.pages.append(self._plotting_page())
 
         # Page 5: Plot Settings
         self.pages.append(self.plot_settings_page())

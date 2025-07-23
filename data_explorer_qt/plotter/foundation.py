@@ -238,7 +238,7 @@ class PlottingDialog(QWidget):
                     )
                 case NumericConversion.BIN_WIDTH:
                     if not isinstance(nc.value, list):
-                        self.error("Incorrect type for numeric->categorical bin width")
+                        self.error("Incorrect type for numeric->categorical bin edges")
                         return
                     self.plotting_data[cat_name(column)] = pd.cut(
                         self.plotting_data[column], nc.value

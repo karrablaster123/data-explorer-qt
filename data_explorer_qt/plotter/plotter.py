@@ -401,16 +401,16 @@ class HistDialog(PlottingDialog):
         )
 
         radio_layout = QVBoxLayout()
-        self.bin_auto = QRadioButton("Automatically set the bin width")
+        self.bin_auto = QRadioButton("Automatically set the bin edges")
         self.bin_auto.setChecked(True)
         self.bin_num = QRadioButton("Set the number of bins")
         self.bin_num_spinbox = QSpinBox(minimum=1, maximum=1000, value=5)
-        self.bin_width = QRadioButton("Manually set bin widths")
-        self.bin_width_line_edit = QLineEdit()
-        self.bin_width_line_edit.setPlaceholderText(
+        self.bin_edges = QRadioButton("Manually set bin edges")
+        self.bin_edges_line_edit = QLineEdit()
+        self.bin_edges_line_edit.setPlaceholderText(
             "1, 2, 3, ... if only variable is set. If Y-variable is also set: 1, 2, 3, ...; 10, 20, 30, ..."
         )
-        self.bin_width_line_edit.setToolTip(
+        self.bin_edges_line_edit.setToolTip(
             "For one variable histogram, use a comma-separated list of values.\nFor two variable histograms, separate the two comma-separated lists by a semicolon."
         )
 
@@ -420,8 +420,8 @@ class HistDialog(PlottingDialog):
                 self.bin_auto,
                 self.bin_num,
                 self.bin_num_spinbox,
-                self.bin_width,
-                self.bin_width_line_edit,
+                self.bin_edges,
+                self.bin_edges_line_edit,
             ],
             self.on_widget_change,
         )
@@ -533,8 +533,8 @@ class HistDialog(PlottingDialog):
         else:
             self.plot_palette = None
 
-        if self.bin_width.isChecked():
-            string = self.bin_width_line_edit.text()
+        if self.bin_edges.isChecked():
+            string = self.bin_edges_line_edit.text()
             try:
                 if ";" in string:
                     list_floats: list[list[float]] | list[float] = [
@@ -547,7 +547,7 @@ class HistDialog(PlottingDialog):
                     ]
             except Exception:
                 self.error(
-                    "The formatting for bin widths is incorrect. Please check it."
+                    "The formatting for bin edges is incorrect. Please check it."
                 )
                 self.debug(traceback.format_exc())
                 return

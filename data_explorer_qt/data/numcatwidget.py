@@ -52,9 +52,9 @@ class NumCatWidget(QWidget):
         self.as_category_radio.setChecked(True)
         self.bin_n_radio = QRadioButton(NUM_TO_CAT_OPS[1])
         self.bin_n_spinbox = QSpinBox(minimum=1, maximum=1000, value=5)
-        self.bin_width_radio = QRadioButton(NUM_TO_CAT_OPS[2])
-        self.bin_width_line_edit = QLineEdit()
-        self.bin_width_line_edit.setPlaceholderText(
+        self.bin_edges_radio = QRadioButton(NUM_TO_CAT_OPS[2])
+        self.bin_edges_line_edit = QLineEdit()
+        self.bin_edges_line_edit.setPlaceholderText(
             "Comma-separated list of values: 1, 2, 3"
         )
         build_grid_layout(
@@ -63,7 +63,7 @@ class NumCatWidget(QWidget):
                 [column_label],
                 [self.as_category_radio],
                 [self.bin_n_radio, self.bin_n_spinbox],
-                [self.bin_width_radio, self.bin_width_line_edit],
+                [self.bin_edges_radio, self.bin_edges_line_edit],
                 [delete_button],
             ],
         )
@@ -73,8 +73,8 @@ class NumCatWidget(QWidget):
                 self.as_category_radio,
                 self.bin_n_radio,
                 self.bin_n_spinbox,
-                self.bin_width_radio,
-                self.bin_width_line_edit,
+                self.bin_edges_radio,
+                self.bin_edges_line_edit,
             ],
             self.on_change,
         )
@@ -88,12 +88,12 @@ class NumCatWidget(QWidget):
             self.numeric_converter.value = self.bin_n_spinbox.value()
         else:
             self.numeric_converter.conversion = NumericConversion.BIN_WIDTH
-            string = self.bin_width_line_edit.text()
+            string = self.bin_edges_line_edit.text()
             try:
                 list_floats: list[float] = [float(val) for val in string.split(",")]
             except Exception:
                 self.error(
-                    "The formatting for bin widths is incorrect. Please check it."
+                    "The formatting for bin edges is incorrect. Please check it."
                 )
                 self.debug(traceback.format_exc())
                 return

@@ -28,7 +28,7 @@ NAN_OPS = list(dict.fromkeys(NAN_NUM + NAN_CAT + NAN_DATETIME))
 NUM_TO_CAT_OPS = [
     "As category",
     "Into n equal bins",
-    "Bin by widths",
+    "Bin by bin edges",
 ]
 
 
