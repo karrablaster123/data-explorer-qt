@@ -101,9 +101,9 @@ class FilterWidget(QWidget):
             case Dtype.CATEGORICAL:
                 self.filter_widget = MultiSelectComboBox()
                 self.filter_widget.addItems(  # pyright: ignore[reportUnknownMemberType]
-                    list(datastore.cleaned_data[column].unique())
+                    list(datastore.cleaned_data[column].astype(str).unique())
                 )
-                _ = self.filter_widget.currentTextChanged.connect(
+                _ = self.filter_widget.dataChanged.connect(
                     self.on_categorical_change
                 )
                 self.filterstore = FilterStore(
@@ -169,12 +169,14 @@ class FilterWidget(QWidget):
     def on_numeric_change(self):
         if isinstance(self.filter_widget, QLabeledDoubleRangeSlider):
             self.filterstore.filter_value = self.filter_widget.value()
+            self.debug(self.filterstore.filter_value)
         else:
             self.debug("Wrong instance calling wrong function on_numeric_change")
 
     def on_categorical_change(self):
         if isinstance(self.filter_widget, MultiSelectComboBox):
             self.filterstore.filter_value = self.filter_widget.currentData()
+            self.debug(self.filterstore.filter_value)
         else:
             self.debug("Wrong instance calling wrong function on_categorical_change")
 
@@ -184,6 +186,7 @@ class FilterWidget(QWidget):
                 pd.to_datetime(self.min_value.dateTime().toPython()),  # pyright: ignore[reportCallIssue, reportUnknownMemberType, reportArgumentType]
                 pd.to_datetime(self.max_value.dateTime().toPython()),  # pyright: ignore[reportCallIssue, reportUnknownMemberType, reportArgumentType]
             )
+            self.debug(self.filterstore.filter_value)
         except AttributeError:
             self.debug("Wrong instance calling wrong function on_datetime_change")
 

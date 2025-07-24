@@ -56,6 +56,8 @@ VIOLIN_INNER = ["box", "quart", "point", "stick"]
 
 HIST_PLOT_STATISTICS = ["count", "frequency", "proportion", "percent", "density"]
 
+HIST_MULTIPLE = ["layer", "dodge", "stack", "fill"]
+
 COUNT_PLOT_STATISTICS = ["count", "proportion", "percent"]
 
 CORREL_STATISTICS = ["pearson", "kendall", "spearman"]

@@ -65,14 +65,12 @@ class DataImporter:
             return
 
         self.dataexplorer.info(f"File Selected: {file_path}")
-        self._read_file(file_path, filetype)
-        self.debug(f"{self.data.head()}")
-        self.debug(f"{self.data.shape}")
         self.file_name: str = Path(file_path).stem
-
-        self._validate_import()
+        self._read_file(file_path, filetype)
 
     def _validate_import(self):
+        self.debug(f"{self.data.head()}")
+        self.debug(f"{self.data.shape}")
         self._validate_import_widget = self._create_widget(800, 600)
         self.layout = QVBoxLayout(self._validate_import_widget)
         self.layout.setSpacing(5)
@@ -325,18 +323,39 @@ class DataImporter:
         if filetype.startswith("Excel"):
             excel_file = pd.ExcelFile(file_path)
             if len(excel_file.sheet_names) > 1:
-                self.error(
-                    "Excel file has more than 1 sheet. Importing the first sheet."
-                )
-            self.data = pd.read_excel(file_path, engine="calamine")
+                self.select_worksheet_widget = self.dataexplorer.get_widget()
+                layout = QVBoxLayout(self.select_worksheet_widget)
+                self._sheet_combobox = QComboBox()
+                sheet_names = [str(name) for name in excel_file.sheet_names]
+                self._sheet_combobox.addItems(sheet_names)
+                sheet_combobox = get_label_widget_row("Select Worksheet:", self._sheet_combobox)
+                button = QPushButton("Continue")
+                button.clicked.connect(
+                        lambda: self._import_data_excel(file_path)
+                        )
+                build_layout(layout, [sheet_combobox,
+                                      button])
+                self.select_worksheet_widget.show()
+            else:
+                self.data = pd.read_excel(file_path, engine="calamine")
+                self._validate_import()
         elif filetype.startswith("CSV"):
             self.data = pd.read_csv(file_path)
+            self._validate_import()
         elif filetype.startswith("Parquet"):
             self.data = pd.read_parquet(file_path)
+            self._validate_import()
         elif filetype.startswith("Feather"):
             self.data = pd.read_feather(file_path)
+            self._validate_import()
         else:
             self.error("Import failed! Invalid filetype.")
+
+    def _import_data_excel(self, file_path: str):
+        sheet = self._sheet_combobox.currentText()
+        self.data = pd.read_excel(file_path, sheet_name=sheet, engine="calamine")
+        self.select_worksheet_widget.close()
+        self._validate_import()
 
     def _close_widget(self, widget: QWidget):
         self.dataexplorer.owned_widgets.remove(widget)

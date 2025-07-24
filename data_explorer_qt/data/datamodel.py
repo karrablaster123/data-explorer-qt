@@ -485,7 +485,7 @@ def apply_filter(
     match filterstore.dtype:
         case Dtype.CATEGORICAL:
             if len(filterstore.filter_value) > 0:
-                data = data[data[column].isin(filterstore.filter_value)]
+                data = data[data[column].astype(str).isin(filterstore.filter_value)]
         case Dtype.NUMERIC:
             data = data[
                 (data[column].values >= filterstore.filter_value[0])

@@ -41,7 +41,7 @@ from ..guihelper import (
     get_label_widget_row_callback,
 )
 
-from .foundation import SORT_CATEGORIES, EmbeddedDynamicPlot, PlottingDialog, TickParams
+from .foundation import HIST_MULTIPLE, SORT_CATEGORIES, EmbeddedDynamicPlot, PlottingDialog, TickParams
 from .foundation import (
     MARKERS,
     LINE_STYLES,
@@ -354,8 +354,9 @@ class HistDialog(PlottingDialog):
     log_y: bool = False
     alpha: float = 1.0
     n_bins: int = 10
+    multiple: str = HIST_MULTIPLE[0]
     element: str = "step"
-    plot_statistic = "count"
+    plot_statistic = HIST_PLOT_STATISTICS[0]
     bins: str | list[float] | int | list[list[float]] = "auto"
     n_cols: int | None = None
     fill: bool = True
@@ -409,6 +410,17 @@ class HistDialog(PlottingDialog):
         plot_statistic_combobox = get_label_widget_row_(
             "Statistic", self.plot_statistic_combobox
         )
+        self.multiple_combobox = QComboBox()
+        self.multiple_combobox.addItems(HIST_MULTIPLE)
+        self.multiple_combobox.setToolTip("How to handle overlaid hues."
+                                          "\nlayer: plot each hue on top of each other"
+                                          "\ndodge:plot each hue next to each other; use when variable is categorical"
+                                          "\nstack: plot each hue one on top of another"
+                                          )
+        multiple_combobox = get_label_widget_row_(
+            "Multiple", self.multiple_combobox
+        )
+
 
         radio_layout = QVBoxLayout()
         self.bin_auto = QRadioButton("Automatically set the bin edges")
@@ -463,7 +475,7 @@ class HistDialog(PlottingDialog):
         build_layout_with_callbacks(
             vbox_widget,
             [
-                [alpha_slider, plot_statistic_combobox],
+                [alpha_slider, plot_statistic_combobox, multiple_combobox],
                 [radio_layout],
                 [n_cols_spinbox],
                 [self.fill_checkbox, self.legend_checkbox, self.rugplot_checkbox],
@@ -522,6 +534,7 @@ class HistDialog(PlottingDialog):
         self.log_y = self.log_y_checkbox.isChecked()
         self.alpha = self.alpha_slider.value()
         self.plot_statistic = self.plot_statistic_combobox.currentText()
+        self.multiple = self.multiple_combobox.currentText()
         self.fill = self.fill_checkbox.isChecked()
         self.element = "step" if self.fill else "bars"
         self.legend = self.legend_checkbox.isChecked()
@@ -600,6 +613,7 @@ class HistDialog(PlottingDialog):
                     stat=self.plot_statistic,
                     element=self.element,
                     bins=self.bins,
+                    multiple=self.multiple,
                     fill=self.fill,
                     alpha=self.alpha,
                 )
@@ -621,6 +635,7 @@ class HistDialog(PlottingDialog):
                     palette=self.plot_palette,
                     stat=self.plot_statistic,
                     bins=self.bins,
+                    multiple=self.multiple,
                     alpha=self.alpha,
                     cbar=self.cbar,
                 )
@@ -1172,7 +1187,6 @@ class CatPlotDialog(PlottingDialog):
     log_y: bool = False
     n_cols: int | None = None
     legend: bool = True
-    swap_xy: bool = False
     plot_palette: str | None = None
     kwargs: dict[str, typing.Any] = {}
     settings_widgets: dict[CatPlotMode, QWidget] = {}
@@ -1252,7 +1266,6 @@ class CatPlotDialog(PlottingDialog):
 
         self.log_x_checkbox = QCheckBox("Log X")
         self.log_y_checkbox = QCheckBox("Log Y")
-        self.swap_xy_checkbox = QCheckBox("Swap X-Y axes")
         self.legend_checkbox = QCheckBox("Legend")
         self.legend_checkbox.setChecked(True)
 
@@ -1304,7 +1317,6 @@ class CatPlotDialog(PlottingDialog):
                 [
                     self.log_y_checkbox,
                     self.log_x_checkbox,
-                    self.swap_xy_checkbox,
                     self.legend_checkbox,
                     n_cols_spinbox,
                 ],
@@ -1780,7 +1792,6 @@ class CatPlotDialog(PlottingDialog):
         self.log_x = self.log_x_checkbox.isChecked()
         self.log_y = self.log_y_checkbox.isChecked()
         self.legend = self.legend_checkbox.isChecked()
-        self.swap_xy = self.swap_xy_checkbox.isChecked()
         self.palette_type = self.palette_type_combobox.currentText()
 
         if self.col_column is not None and self.row_column is None:
@@ -1794,9 +1805,6 @@ class CatPlotDialog(PlottingDialog):
             self.plot_palette = self.get_palette()
         else:
             self.plot_palette = None
-
-        if self.swap_xy:
-            self.x_column, self.y_column = self.y_column, self.x_column
 
         self.setup_kwargs()
 
