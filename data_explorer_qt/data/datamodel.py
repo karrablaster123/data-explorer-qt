@@ -322,6 +322,7 @@ class DataStore:
         callbacks: dict[int, Callable[[], None]] = self.on_filter_change_callbacks
         for callback in callbacks.values():
             callback()
+            self.debug("Replotting!")
 
     @cached_property
     def columns(self) -> list[str]:

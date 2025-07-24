@@ -88,7 +88,12 @@ COLOR_PALETTES = {
     "diverging": ["vlag", "icefire", "coolwarm", "bwr", "seismic"],
 }
 
-PALETTE_TYPES = list(COLOR_PALETTES.keys())
+PALETTE_TYPES = ["qualitative", "circular", "perceptually_uniform", "diverging"]
+
+SORT_CATEGORIES = [
+        "First Occurence",
+        "Alphabetical",
+        ]
 
 
 @typing.final
@@ -200,7 +205,7 @@ class PlottingDialog(QWidget):
     dynamic_plot_widget: EmbeddedDynamicPlot | None = None
     dynamic_callback_id: int = -1
     plotting_data: pd.DataFrame
-    palette_type: str = PALETTE_TYPES[0]
+    palette_type: Literal[*PALETTE_TYPES] = PALETTE_TYPES[0] # pyright: ignore
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore", name: str):
         super().__init__()
@@ -254,6 +259,15 @@ class PlottingDialog(QWidget):
             else:
                 return col_name
 
+    def get_category_order(self, col_name: str | None):
+        if col_name is None or col_name.endswith("_categorical_"):
+            return None
+        match self.dataexplorer.plotter.sort_category_by:
+            case "First Occurence":
+                return None
+            case "Alphabetical":
+                return sorted(self.plotting_data[col_name].unique())
+
     def get_palette(self):
         match self.palette_type:
             case "qualitative":
@@ -264,8 +278,6 @@ class PlottingDialog(QWidget):
                 return self.dataexplorer.plotter.perceptually_uniform_palette
             case "diverging":
                 return self.dataexplorer.plotter.diverging_palette
-            case _:
-                return ""
 
     def on_plot(self):
         self._generate_plotting_data()

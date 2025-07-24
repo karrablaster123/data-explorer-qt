@@ -41,7 +41,7 @@ from ..guihelper import (
     get_label_widget_row_callback,
 )
 
-from .foundation import EmbeddedDynamicPlot, PlottingDialog, TickParams
+from .foundation import SORT_CATEGORIES, EmbeddedDynamicPlot, PlottingDialog, TickParams
 from .foundation import (
     MARKERS,
     LINE_STYLES,
@@ -69,6 +69,7 @@ class Plotter:
     circular_palette: str = COLOR_PALETTES["circular"][0]
     perceptually_uniform_palette: str = COLOR_PALETTES["perceptually_uniform"][0]
     diverging_palette: str = COLOR_PALETTES["diverging"][0]
+    sort_category_by: typing.Literal[*SORT_CATEGORIES] = SORT_CATEGORIES[0] # pyright: ignore
 
     def __init__(self, dataexplorer: "DataExplorer"):
         self.dataexplorer = dataexplorer
@@ -148,6 +149,9 @@ class Plotter:
         )
         self.diverging_palette_combobox = QComboBox()
         self.diverging_palette_combobox.addItems(COLOR_PALETTES["diverging"])
+        
+        self.sort_categories_combobox = QComboBox()
+        self.sort_categories_combobox.addItems(SORT_CATEGORIES)
 
         self.build_plot_settings_page()
 
@@ -263,6 +267,9 @@ class Plotter:
         diverging_palette_combobox = get_label_widget_row_(
             "Diverging Palette", self.diverging_palette_combobox
         )
+        sort_categories_combobox = get_label_widget_row_(
+                "Sort Category by: ", self.sort_categories_combobox
+        )
         build_grid_layout(
             layout,
             [
@@ -277,6 +284,7 @@ class Plotter:
                 [(y_grid_colour_combobox, 1), (y_grid_alpha_slider, 1)],
                 [qualitative_palette_combobox, circular_palette_combobox],
                 [perceptually_uniform_palette_combobox, diverging_palette_combobox],
+                [sort_categories_combobox],
             ],
         )
         layout.addStretch(1)
@@ -320,6 +328,8 @@ class Plotter:
             self.perceptually_uniform_palette_combobox.currentText()
         )
         self.diverging_palette = self.diverging_palette_combobox.currentText()
+
+        self.sort_category_by = self.sort_categories_combobox.currentText()
 
         datastore = self.dataexplorer.datamodel.active_dataset
         if datastore is None:
@@ -579,6 +589,9 @@ class HistDialog(PlottingDialog):
                     hue=self.hue_column,
                     row=self.row_column,
                     col=self.col_column,
+                    hue_order=self.get_category_order(self.hue_column),
+                    row_order=self.get_category_order(self.row_column),
+                    col_order=self.get_category_order(self.col_column),
                     col_wrap=self.n_cols,
                     rug=self.rugplot,
                     log_scale=(self.log_x, self.log_y),
@@ -598,6 +611,9 @@ class HistDialog(PlottingDialog):
                     hue=self.hue_column,
                     row=self.row_column,
                     col=self.col_column,
+                    hue_order=self.get_category_order(self.hue_column),
+                    row_order=self.get_category_order(self.row_column),
+                    col_order=self.get_category_order(self.col_column),
                     col_wrap=self.n_cols,
                     rug=self.rugplot,
                     log_scale=(self.log_x, self.log_y),
@@ -910,6 +926,10 @@ class ScatterDialog(PlottingDialog):
                     style=self.style_column,
                     row=self.row_column,
                     col=self.col_column,
+                    hue_order=self.get_category_order(self.hue_column),
+                    style_order=self.get_category_order(self.style_column),
+                    row_order=self.get_category_order(self.row_column),
+                    col_order=self.get_category_order(self.col_column),
                     col_wrap=self.n_cols,
                     palette=self.plot_palette,
                     alpha=self.alpha,
@@ -1812,6 +1832,9 @@ class CatPlotDialog(PlottingDialog):
             hue=self.hue_column,
             row=self.row_column,
             col=self.col_column,
+            hue_order=self.get_category_order(self.hue_column),
+            row_order=self.get_category_order(self.row_column),
+            col_order=self.get_category_order(self.col_column),
             col_wrap=self.n_cols,
             log_scale=(self.log_x, self.log_y),
             legend=self.legend,
@@ -2062,6 +2085,9 @@ class CountPlotDialog(PlottingDialog):
             hue=self.hue_column,
             row=self.row_column,
             col=self.col_column,
+            hue_order=self.get_category_order(self.hue_column),
+            row_order=self.get_category_order(self.row_column),
+            col_order=self.get_category_order(self.col_column),
             col_wrap=self.n_cols,
             log_scale=(self.log_x, self.log_y),
             legend=self.legend,
@@ -2558,6 +2584,10 @@ class LineDialog(PlottingDialog):
                     style=self.style_column,
                     row=self.row_column,
                     col=self.col_column,
+                    hue_order=self.get_category_order(self.hue_column),
+                    style_order=self.get_category_order(self.style_column),
+                    row_order=self.get_category_order(self.row_column),
+                    col_order=self.get_category_order(self.col_column),
                     col_wrap=self.n_cols,
                     palette=self.plot_palette,
                     kind="line",
