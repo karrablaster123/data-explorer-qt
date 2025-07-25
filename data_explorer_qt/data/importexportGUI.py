@@ -354,6 +354,7 @@ class DataImporter:
     def _import_data_excel(self, file_path: str):
         sheet = self._sheet_combobox.currentText()
         self.data = pd.read_excel(file_path, sheet_name=sheet, engine="calamine")
+        self.file_name = self.file_name + f" Sheet:{sheet}"
         self.select_worksheet_widget.close()
         self._validate_import()
 
