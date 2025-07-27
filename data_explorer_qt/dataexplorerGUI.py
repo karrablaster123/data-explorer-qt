@@ -62,8 +62,9 @@ class DataExplorerGUI(FramelessMainWindow):
         self.setTitle = title_bar.changeTitle
         self.setTitleBar(title_bar)
         self.setMenuWidget(self.titleBar)  # pyright: ignore[reportUnknownArgumentType]
+        self.debug(sys.platform)
         if sys.platform == "win32":
-            (ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("D.x"))
+            (ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Data.Explorer"))
         self.setWindowIcon(QIcon(str(Path(__file__).parent / "icon.ico")))
 
         self.setGeometry(100, 100, *window_dimensions)  # x, y, width, height
