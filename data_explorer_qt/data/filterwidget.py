@@ -124,16 +124,17 @@ class FilterWidget(QWidget):
                         f"Unable to create a filter widget for {column} due to a type issue."
                     )
                     raise InvalidFilterWidgetError()
-                hbox_min = QHBoxLayout()
-                min_value_label = QLabel("Min")
-                self.min_value = QDateTimeEdit()
 
                 def get_time(x: pd.Timestamp) -> QDateTime:
                     return QDateTime(x.year, x.month, x.day, x.hour, x.minute, x.second)
 
+                hbox_min = QHBoxLayout()
+                min_value_label = QLabel("Min")
+                self.min_value = QDateTimeEdit()
                 self.min_value.setMinimumDateTime(get_time(minimum))
                 self.min_value.setMaximumDateTime(get_time(maximum))
                 self.min_value.setDateTime(get_time(minimum))
+                self.min_value.setCalendarPopup(True)
                 _ = self.min_value.dateTimeChanged.connect(self.on_datetime_change)
                 build_layout(hbox_min, [min_value_label, self.min_value])
 
@@ -143,6 +144,7 @@ class FilterWidget(QWidget):
                 self.max_value.setMinimumDateTime(get_time(minimum))
                 self.max_value.setMaximumDateTime(get_time(maximum))
                 self.max_value.setDateTime(get_time(maximum))
+                self.max_value.setCalendarPopup(True)
                 _ = self.max_value.dateTimeChanged.connect(self.on_datetime_change)
                 build_layout(hbox_max, [max_value_label, self.max_value])
 
