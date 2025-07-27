@@ -1,25 +1,25 @@
 # pyright: reportUnknownMemberType=false
-import typing
-from typing import Callable, Literal, override
-import traceback
 import pprint
+import traceback
+import typing
 from dataclasses import dataclass
+from typing import Callable, Literal, override
 
-from PySide6.QtGui import QCloseEvent
-from PySide6.QtWidgets import QHBoxLayout, QTextEdit, QWidget, QVBoxLayout
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.backends.backend_qt import NavigationToolbar2QT
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from PySide6.QtGui import QCloseEvent
+from PySide6.QtWidgets import QHBoxLayout, QTextEdit, QVBoxLayout, QWidget
 from seaborn import FacetGrid
-import pandas as pd
 
 from ..data.dataenums import NumericConversion
 from ..guihelper import build_layout
 
 if typing.TYPE_CHECKING:
-    from ..dataexplorer import DataExplorer
     from ..data.datamodel import DataStore
+    from ..dataexplorer import DataExplorer
 
 FILTER_DISPLAY_STARTING_TEXT = "Filters: "
 
@@ -93,9 +93,9 @@ COLOR_PALETTES = {
 PALETTE_TYPES = ["qualitative", "circular", "perceptually_uniform", "diverging"]
 
 SORT_CATEGORIES = [
-        "First Occurence",
-        "Alphabetical",
-        ]
+    "First Occurence",
+    "Alphabetical",
+]
 
 
 @typing.final
@@ -207,7 +207,7 @@ class PlottingDialog(QWidget):
     dynamic_plot_widget: EmbeddedDynamicPlot | None = None
     dynamic_callback_id: int = -1
     plotting_data: pd.DataFrame
-    palette_type: Literal[*PALETTE_TYPES] = PALETTE_TYPES[0] # pyright: ignore
+    palette_type: Literal[*PALETTE_TYPES] = PALETTE_TYPES[0]  # pyright: ignore
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore", name: str):
         super().__init__()

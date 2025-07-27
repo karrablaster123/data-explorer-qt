@@ -1,25 +1,27 @@
 # pyright: reportUnknownVariableType=false, reportUninitializedInstanceVariable=false
-from collections.abc import Iterable
 import typing
-from pathlib import Path
+from collections.abc import Iterable
 from functools import partial
+from pathlib import Path
+
+import pandas as pd
+from PySide6.QtCore import (
+    Qt,
+)
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
     QComboBox,
     QFileDialog,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QVBoxLayout,
     QRadioButton,
+    QVBoxLayout,
     QWidget,
-    QGridLayout,
 )
-from PySide6.QtCore import (
-    Qt,
-)
-import pandas as pd
 
+from ..guihelper import build_layout, get_dynamic_scroll_area, get_label_widget_row
 from .dataenums import (
     NAN_CAT,
     NAN_DATETIME,
@@ -27,8 +29,6 @@ from .dataenums import (
     VALID_DTYPES,
     NaNOperation,
 )
-from ..guihelper import build_layout, get_label_widget_row
-from ..guihelper import get_dynamic_scroll_area
 from .datamodel import (
     DataModel,
     categorical_comparator,
@@ -328,13 +328,12 @@ class DataImporter:
                 self._sheet_combobox = QComboBox()
                 sheet_names = [str(name) for name in excel_file.sheet_names]
                 self._sheet_combobox.addItems(sheet_names)
-                sheet_combobox = get_label_widget_row("Select Worksheet:", self._sheet_combobox)
+                sheet_combobox = get_label_widget_row(
+                    "Select Worksheet:", self._sheet_combobox
+                )
                 button = QPushButton("Continue")
-                button.clicked.connect(
-                        lambda: self._import_data_excel(file_path)
-                        )
-                build_layout(layout, [sheet_combobox,
-                                      button])
+                button.clicked.connect(lambda: self._import_data_excel(file_path))
+                build_layout(layout, [sheet_combobox, button])
                 self.select_worksheet_widget.show()
             else:
                 self.data = pd.read_excel(file_path, engine="calamine")

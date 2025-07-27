@@ -2,6 +2,7 @@ import typing
 from dataclasses import dataclass
 
 import pandas as pd
+from PySide6.QtCore import QDateTime, Qt
 from PySide6.QtWidgets import (
     QCheckBox,
     QDateTimeEdit,
@@ -12,10 +13,9 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from PySide6.QtCore import QDateTime, Qt
 from superqt import QLabeledDoubleRangeSlider
 
-from ..guihelper import build_layout, MultiSelectComboBox
+from ..guihelper import MultiSelectComboBox, build_layout
 
 if typing.TYPE_CHECKING:
     from ..dataexplorer import DataExplorer
@@ -103,9 +103,7 @@ class FilterWidget(QWidget):
                 self.filter_widget.addItems(  # pyright: ignore[reportUnknownMemberType]
                     list(datastore.cleaned_data[column].astype(str).unique())
                 )
-                _ = self.filter_widget.dataChanged.connect(
-                    self.on_categorical_change
-                )
+                _ = self.filter_widget.dataChanged.connect(self.on_categorical_change)
                 self.filterstore = FilterStore(
                     self.dtype, list(datastore.cleaned_data[column].unique())
                 )

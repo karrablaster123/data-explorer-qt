@@ -1,29 +1,29 @@
 # pyright: reportUnknownMemberType=false, reportMissingTypeStubs=false
 from collections.abc import Sequence
+from typing import Callable, final, override
+
+from PySide6.QtCore import QEvent, Qt
+from PySide6.QtGui import QColor, QFontMetrics, QPalette, QResizeEvent, QStandardItem
 from PySide6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QDoubleSpinBox,
     QFrame,
     QHBoxLayout,
     QLabel,
     QLayout,
+    QLineEdit,
+    QRadioButton,
     QScrollArea,
     QSlider,
     QSpacerItem,
+    QSpinBox,
+    QStyledItemDelegate,
     QVBoxLayout,
     QWidget,
-    QComboBox,
-    QLineEdit,
-    QRadioButton,
-    QSpinBox,
-    QDoubleSpinBox,
-    QCheckBox,
-    QStyledItemDelegate,
 )
-from PySide6.QtGui import QColor, QStandardItem, QPalette, QFontMetrics, QResizeEvent
-from PySide6.QtCore import Qt, QEvent
-from superqt import QLabeledDoubleRangeSlider, QLabeledDoubleSlider
 from qframelesswindow import StandardTitleBar
-
-from typing import Callable, final, override
+from superqt import QLabeledDoubleRangeSlider, QLabeledDoubleSlider
 
 layout_types = QLayout | QSlider | QWidget | QFrame | QSpacerItem
 

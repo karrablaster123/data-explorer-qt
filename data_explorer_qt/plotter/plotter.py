@@ -1,21 +1,19 @@
 # pyright: reportUnknownMemberType=false, reportArgumentType=false
+import traceback
+import typing
 from enum import Enum, auto
 from functools import partial
-import traceback
 from math import ceil
 from pprint import pformat
-import typing
 
 import matplotlib
 import matplotlib.colors as mcolors
-from matplotlib.figure import Figure
-from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
-from numpy import ndarray
 import seaborn as sns
 import statsmodels.api as sm
-from statsmodels.regression.linear_model import RegressionResultsWrapper
-from superqt import QCollapsible, QLabeledDoubleSlider
+from matplotlib.axes import Axes
+from matplotlib.figure import Figure
+from numpy import ndarray
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import (
@@ -33,6 +31,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from statsmodels.regression.linear_model import RegressionResultsWrapper
+from superqt import QCollapsible, QLabeledDoubleSlider
 
 from ..guihelper import (
     MultiSelectComboBox,
@@ -40,22 +40,25 @@ from ..guihelper import (
     build_layout_with_callbacks,
     get_label_widget_row_callback,
 )
-
-from .foundation import HIST_MULTIPLE, SORT_CATEGORIES, EmbeddedDynamicPlot, PlottingDialog, TickParams
 from .foundation import (
-    MARKERS,
-    LINE_STYLES,
-    VIOLIN_INNER,
-    HIST_PLOT_STATISTICS,
-    COUNT_PLOT_STATISTICS,
-    CORREL_STATISTICS,
     COLOR_PALETTES,
+    CORREL_STATISTICS,
+    COUNT_PLOT_STATISTICS,
+    HIST_MULTIPLE,
+    HIST_PLOT_STATISTICS,
+    LINE_STYLES,
+    MARKERS,
     PALETTE_TYPES,
+    SORT_CATEGORIES,
+    VIOLIN_INNER,
+    EmbeddedDynamicPlot,
+    PlottingDialog,
+    TickParams,
 )
 
 if typing.TYPE_CHECKING:
-    from ..dataexplorer import DataExplorer
     from ..data.datamodel import DataStore
+    from ..dataexplorer import DataExplorer
 
 
 matplotlib.use("QtAgg")
@@ -69,7 +72,7 @@ class Plotter:
     circular_palette: str = COLOR_PALETTES["circular"][0]
     perceptually_uniform_palette: str = COLOR_PALETTES["perceptually_uniform"][0]
     diverging_palette: str = COLOR_PALETTES["diverging"][0]
-    sort_category_by: typing.Literal[*SORT_CATEGORIES] = SORT_CATEGORIES[0] # pyright: ignore
+    sort_category_by: typing.Literal[*SORT_CATEGORIES] = SORT_CATEGORIES[0]  # pyright: ignore
 
     def __init__(self, dataexplorer: "DataExplorer"):
         self.dataexplorer = dataexplorer
@@ -149,7 +152,7 @@ class Plotter:
         )
         self.diverging_palette_combobox = QComboBox()
         self.diverging_palette_combobox.addItems(COLOR_PALETTES["diverging"])
-        
+
         self.sort_categories_combobox = QComboBox()
         self.sort_categories_combobox.addItems(SORT_CATEGORIES)
 
@@ -268,7 +271,7 @@ class Plotter:
             "Diverging Palette", self.diverging_palette_combobox
         )
         sort_categories_combobox = get_label_widget_row_(
-                "Sort Category by: ", self.sort_categories_combobox
+            "Sort Category by: ", self.sort_categories_combobox
         )
         build_grid_layout(
             layout,
@@ -412,15 +415,13 @@ class HistDialog(PlottingDialog):
         )
         self.multiple_combobox = QComboBox()
         self.multiple_combobox.addItems(HIST_MULTIPLE)
-        self.multiple_combobox.setToolTip("How to handle overlaid hues."
-                                          "\nlayer: plot each hue on top of each other"
-                                          "\ndodge:plot each hue next to each other; use when variable is categorical"
-                                          "\nstack: plot each hue one on top of another"
-                                          )
-        multiple_combobox = get_label_widget_row_(
-            "Multiple", self.multiple_combobox
+        self.multiple_combobox.setToolTip(
+            "How to handle overlaid hues."
+            "\nlayer: plot each hue on top of each other"
+            "\ndodge:plot each hue next to each other; use when variable is categorical"
+            "\nstack: plot each hue one on top of another"
         )
-
+        multiple_combobox = get_label_widget_row_("Multiple", self.multiple_combobox)
 
         radio_layout = QVBoxLayout()
         self.bin_auto = QRadioButton("Automatically set the bin edges")

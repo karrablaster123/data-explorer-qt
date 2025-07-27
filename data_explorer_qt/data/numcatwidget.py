@@ -1,3 +1,6 @@
+import traceback
+import typing
+
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import (
     QLabel,
@@ -9,17 +12,13 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-import typing
-import traceback
-
 from ..guihelper import add_callback_to_standard_signal, build_grid_layout
 
 if typing.TYPE_CHECKING:
-    from .datamodel import DataStore
     from ..dataexplorer import DataExplorer
+    from .datamodel import DataStore
 
-from .dataenums import NumericConversion, NUM_TO_CAT_OPS
-from .dataenums import NumericConverter
+from .dataenums import NUM_TO_CAT_OPS, NumericConversion, NumericConverter
 
 
 @typing.final

@@ -1,6 +1,7 @@
-from typing import Any
-import toml
 from pathlib import Path
+from typing import Any
+
+import toml
 
 starting_path = Path(__file__)
 config_path = starting_path.parent / "config.toml"

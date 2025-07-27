@@ -1,7 +1,7 @@
+import pandas as pd
 from PySide6.QtCore import QAbstractTableModel, Qt
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QTableView, QVBoxLayout, QWidget
-import pandas as pd
 
 
 class TableViewer:

@@ -1,7 +1,11 @@
 # pyright: reportMissingTypeStubs=false, reportUnknownVariableType=false, reportArgumentType=false, reportAssignmentType=false, reportOperatorIssue=false
+import typing
 from dataclasses import dataclass
 from functools import cache, cached_property
 from typing import Callable, final
+
+import pandas as pd
+from pandas.api.types import is_datetime64_any_dtype, is_numeric_dtype, is_object_dtype
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QComboBox,
@@ -11,25 +15,14 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-import pandas as pd
-from pandas.api.types import is_datetime64_any_dtype, is_numeric_dtype, is_object_dtype
-
-
-import typing
 
 if typing.TYPE_CHECKING:
     from ..dataexplorer import DataExplorer
 
-from .dataenums import NumericConverter
-from .dataenums import DtypeOperation
-from .dataenums import Dtype
-from .dataenums import NaNOperation
-from .filterwidget import FilterStore
-from .filterwidget import FilterWidget
-from .filterwidget import InvalidFilterWidgetError
+from ..guihelper import build_layout, get_dynamic_scroll_area
+from .dataenums import Dtype, DtypeOperation, NaNOperation, NumericConverter
+from .filterwidget import FilterStore, FilterWidget, InvalidFilterWidgetError
 from .numcatwidget import NumCatWidget
-from ..guihelper import build_layout
-from ..guihelper import get_dynamic_scroll_area
 
 
 @dataclass

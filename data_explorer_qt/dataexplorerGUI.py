@@ -1,33 +1,35 @@
 # pyright: reportUninitializedInstanceVariable=false, reportUnknownMemberType=false, reportMissingTypeStubs=false
 
+import ctypes
+import sys
+import threading
+import typing
 from functools import partial
 from pathlib import Path
-import sys
+from typing import final
+
 import pandas as pd
-import ctypes
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QCloseEvent, QFont, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
-    QStatusBar,
-    QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QLabel,
-    QFrame,
-    QSpacerItem,
-    QSizePolicy,
-    QMessageBox,
     QComboBox,
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QStatusBar,
+    QVBoxLayout,
+    QWidget,
 )
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QCloseEvent, QFont, QIcon
 from qframelesswindow import FramelessMainWindow
-import threading
-from typing import final
-import typing
 
 from .data.datamodel import DataModel, FilterGUI, NumCatGUI
+from .data.importexportGUI import DataImporter, export_data
 from .data.tableGUI import TableViewer
 from .guihelper import (
     CustomTitleBar,
@@ -35,8 +37,6 @@ from .guihelper import (
     build_layout,
     get_label_widget_row,
 )
-
-from .data.importexportGUI import DataImporter, export_data
 
 if typing.TYPE_CHECKING:
     from .dataexplorer import DataExplorer
@@ -64,7 +64,11 @@ class DataExplorerGUI(FramelessMainWindow):
         self.setMenuWidget(self.titleBar)  # pyright: ignore[reportUnknownArgumentType]
         self.debug(sys.platform)
         if sys.platform == "win32":
-            (ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Data.Explorer"))
+            (
+                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+                    "Data.Explorer"
+                )
+            )
         self.setWindowIcon(QIcon(str(Path(__file__).parent / "icon.ico")))
 
         self.setGeometry(100, 100, *window_dimensions)  # x, y, width, height

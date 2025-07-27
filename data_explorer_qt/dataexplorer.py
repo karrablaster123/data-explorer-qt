@@ -1,20 +1,20 @@
 # pyright: reportImportCycles=false, reportUnusedImport=false
-from pathlib import Path
-import traceback
-from typing import Any, Callable, final
-import pprint
-import logging
-import sys
-import os
 import importlib
+import logging
+import os
+import pprint
+import sys
+import traceback
+from pathlib import Path
+from typing import Any, Callable, final
 
-from PySide6.QtWidgets import QApplication, QWidget
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication, QWidget
 
 from . import setqtapi  # noqa
 from .config.readconfig import CONFIG
-from .dataexplorerGUI import DataExplorerGUI
 from .data.datamodel import DataModel
+from .dataexplorerGUI import DataExplorerGUI
 from .plotter.plotter import Plotter
 
 

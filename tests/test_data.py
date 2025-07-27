@@ -1,17 +1,19 @@
 # pyright: reportArgumentType=false, reportUnknownMemberType=false, reportMissingTypeStubs=false
+from pathlib import Path
+
+import pandas as pd
+from spoofs import debug_error_spoof as debug_spoof
+
+from data_explorer_qt.data.dataenums import Dtype
 from data_explorer_qt.data.datamodel import (
+    FilterStore,
     apply_filter,
     categorical_comparator,
     datetime_comparator,
     handle_dtype_operation,
     handle_nan_operation,
     numeric_comparator,
-    FilterStore,
 )
-from data_explorer_qt.data.dataenums import Dtype
-from spoofs import debug_error_spoof as debug_spoof
-import pandas as pd
-from pathlib import Path
 
 
 def test_dtype_conversion():
