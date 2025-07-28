@@ -25,12 +25,12 @@ from PySide6.QtWidgets import (
 from qframelesswindow import StandardTitleBar
 from superqt import QLabeledDoubleRangeSlider, QLabeledDoubleSlider
 
-layout_types = QLayout | QSlider | QWidget | QFrame | QSpacerItem
+widget_types = QLayout | QSlider | QWidget | QFrame | QSpacerItem
 
 
 def build_layout(
     layout: QHBoxLayout | QVBoxLayout,
-    widget_list: Sequence[layout_types | tuple[layout_types, int]],
+    widget_list: Sequence[widget_types | tuple[widget_types, int]],
 ):
     for w in widget_list:
         if isinstance(w, tuple):
@@ -49,7 +49,7 @@ def build_layout(
 
 def build_grid_layout(
     layout: QVBoxLayout,
-    widget_lists: Sequence[Sequence[layout_types | tuple[layout_types, int]]],
+    widget_lists: Sequence[Sequence[widget_types | tuple[widget_types, int]]],
 ):
     hboxes: list[QHBoxLayout] = []
     for wl in widget_lists:
@@ -96,8 +96,8 @@ def get_label_widget_row_callback(
 
 def build_layout_with_callbacks(
     layout: QHBoxLayout | QVBoxLayout,
-    widget_list: Sequence[layout_types | tuple[layout_types, int]]
-    | Sequence[Sequence[layout_types | tuple[layout_types, int]]],
+    widget_list: Sequence[widget_types | tuple[widget_types, int]]
+    | Sequence[Sequence[widget_types | tuple[widget_types, int]]],
     callback: Callable[[], None],
 ):
     if all(isinstance(wl, list) for wl in widget_list):
@@ -123,8 +123,8 @@ callback_types = (
 
 
 def add_callback_to_standard_signal(
-    widget_list: Sequence[callback_types | layout_types | tuple[layout_types, int]]
-    | Sequence[Sequence[callback_types | layout_types | tuple[layout_types, int]]],
+    widget_list: Sequence[callback_types | widget_types | tuple[widget_types, int]]
+    | Sequence[Sequence[callback_types | widget_types | tuple[widget_types, int]]],
     callback: Callable[[], None],
 ):
     for widget in widget_list:
