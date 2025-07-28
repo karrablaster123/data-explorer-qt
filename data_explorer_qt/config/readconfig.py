@@ -32,4 +32,4 @@ def get_list_of_themes(config: dict[str, Any]):
 
 
 CONFIG = get_config()
-CONFIG_STYLESHEET = CONFIG["Themes"]["Dark"]
+CONFIG_STYLESHEET = CONFIG["Themes"]["Light"]

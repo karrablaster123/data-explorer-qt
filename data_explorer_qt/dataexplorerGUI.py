@@ -73,6 +73,10 @@ class DataExplorerGUI(FramelessMainWindow):
 
         self.setGeometry(100, 100, *window_dimensions)  # x, y, width, height
 
+        self.current_theme = self.config["General"]["default_theme"].casefold()
+        self.current_theme_index = self._get_current_theme_index()
+        self.debug(self.current_theme)
+
         # Doesn't really do anything. Most fonts are set by QSS
         QApplication.setFont(QFont(self.dataexplorer.font, self.dataexplorer.font_size))
 
@@ -100,7 +104,6 @@ class DataExplorerGUI(FramelessMainWindow):
         self.main_layout.addWidget(self.sidebar)
         self.main_layout.addWidget(self.content_area_container, 1)
 
-        self.current_theme = self.config["General"]["default_theme"].casefold()
         self.set_theme()
         self.write_to_status_bar("Initialisation complete!")
 
@@ -440,6 +443,7 @@ class DataExplorerGUI(FramelessMainWindow):
         app_settings_layout = QVBoxLayout(app_settings_page)
         self.theme_combobox = QComboBox()
         self.theme_combobox.addItems(self.config["Themes"].keys())
+        self.theme_combobox.setCurrentIndex(self.current_theme_index)
         _ = self.theme_combobox.currentTextChanged.connect(self.set_theme)
         theme_combobox = get_label_widget_row("Theme", self.theme_combobox)
         build_layout(app_settings_layout, [theme_combobox])
@@ -457,11 +461,19 @@ class DataExplorerGUI(FramelessMainWindow):
         self.QStatusBar.clearMessage()
         self.clear_message_timeout = None
 
+    def _get_current_theme_index(self) -> int:
+        for i, theme_name in enumerate(self.config["Themes"].keys()):
+            if self.current_theme.casefold() == theme_name.casefold():
+                return i
+        self.debug("Could not get current theme index!")
+        return 0
+
     def set_theme(self):
         self.current_theme = self.theme_combobox.currentText()
         for theme_name in self.config["Themes"].keys():
             if self.current_theme.casefold() == theme_name.casefold():
                 self.dataexplorer.stylesheet = self.config["Themes"][theme_name]
+                self.debug(self.dataexplorer.stylesheet)
                 self.setStyleSheet(self.dataexplorer.stylesheet)
                 break
 
