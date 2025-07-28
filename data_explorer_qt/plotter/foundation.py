@@ -1,4 +1,5 @@
 # pyright: reportUnknownMemberType=false
+from itertools import product
 import pprint
 import traceback
 import typing
@@ -12,10 +13,11 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QHBoxLayout, QTextEdit, QVBoxLayout, QWidget
+from qframelesswindow import FramelessWindow
 from seaborn import FacetGrid
 
 from ..data.dataenums import NumericConversion
-from ..guihelper import build_layout
+from ..guihelper import CustomTitleBar, build_layout
 
 if typing.TYPE_CHECKING:
     from ..data.datamodel import DataStore
@@ -97,6 +99,9 @@ SORT_CATEGORIES = [
     "Alphabetical",
 ]
 
+REGRESSION_MIN_DEGREE = 1
+REGRESSION_MAX_DEGREE = 4
+
 
 @typing.final
 @dataclass
@@ -116,7 +121,7 @@ class TickParams:
 
 
 @typing.final
-class EmbeddedDynamicPlot(QWidget):
+class EmbeddedDynamicPlot(FramelessWindow):
     filter_display: QTextEdit
     plot: QWidget
     figure: Figure
@@ -129,6 +134,9 @@ class EmbeddedDynamicPlot(QWidget):
         parent: "PlottingDialog",
     ):
         super().__init__()
+        cust_title = CustomTitleBar(self)
+        self.setWindowTitle = cust_title.changeTitle
+        self.setTitleBar(cust_title)
         self.setWindowTitle(name)
         self.debug = dataexplorer.debug
         self.error = dataexplorer.error
@@ -203,7 +211,7 @@ class EmbeddedDynamicPlot(QWidget):
         return super().closeEvent(event)
 
 
-class PlottingDialog(QWidget):
+class PlottingDialog(FramelessWindow):
     dynamic_plot_widget: EmbeddedDynamicPlot | None = None
     dynamic_callback_id: int = -1
     plotting_data: pd.DataFrame
@@ -211,6 +219,9 @@ class PlottingDialog(QWidget):
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore", name: str):
         super().__init__()
+        cust_title = CustomTitleBar(self)
+        self.setWindowTitle = cust_title.changeTitle
+        self.setTitleBar(cust_title)
         self.setObjectName("StandardWidget")
         self.setWindowTitle(f"{name} Plotting Dialog")
         self.dataexplorer: "DataExplorer" = dataexplorer
@@ -317,3 +328,34 @@ class PlottingDialog(QWidget):
     def closeEvent(self, event: QCloseEvent) -> None:
         self.dataexplorer.owned_widgets.remove(self)
         return super().closeEvent(event)
+
+
+def get_dataframe_X_for_degree(df: pd.DataFrame, degree: int) -> tuple[pd.DataFrame, list[str]]:
+    generated_columns = []
+    columns = list(df.columns)
+    for deg in range(2, degree+1): # 2, 3, 4, ...
+        cols_this_iter = []
+        new_cols_this_iter = []
+        for col in columns:
+            new_col_name = f"{col}^{deg}"
+            assert new_col_name not in columns
+            cols_this_iter.append(col)
+            new_cols_this_iter.append(new_col_name)
+        df[new_cols_this_iter] = df[cols_this_iter] ** deg
+        generated_columns.extend(new_cols_this_iter)
+    return ( df, generated_columns )
+
+def get_dataframe_X_with_interaction(df: pd.DataFrame, generated_columns: list[str]) -> pd.DataFrame:
+    columns = set(df.columns) - set(generated_columns)
+    generated_columns = []
+    for col_A, col_B in product(columns, columns):
+        if col_A != col_B:
+            new_col_name = f"{col_A}*{col_B}"
+            if new_col_name in generated_columns:
+                continue
+            assert new_col_name not in columns
+            df[new_col_name] = df[col_A] * df[col_B]
+            generated_columns.extend([new_col_name,
+                                      f"{col_B}*{col_A}"])
+
+    return df

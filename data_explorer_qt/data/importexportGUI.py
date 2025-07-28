@@ -311,7 +311,7 @@ class DataImporter:
         )
 
     def _create_widget(self, w: int, h: int) -> QWidget:
-        widget = self.dataexplorer.get_widget()
+        widget = self.dataexplorer.get_widget(detached=True)
         widget.setObjectName("DataImporter")
         widget.setWindowTitle("Data Importer")
         widget.resize(w, h)
@@ -323,7 +323,7 @@ class DataImporter:
         if filetype.startswith("Excel"):
             excel_file = pd.ExcelFile(file_path)
             if len(excel_file.sheet_names) > 1:
-                self.select_worksheet_widget = self.dataexplorer.get_widget()
+                self.select_worksheet_widget = self._create_widget(200, 300)
                 layout = QVBoxLayout(self.select_worksheet_widget)
                 self._sheet_combobox = QComboBox()
                 sheet_names = [str(name) for name in excel_file.sheet_names]

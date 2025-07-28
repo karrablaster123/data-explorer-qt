@@ -311,7 +311,8 @@ class DataExplorerGUI(FramelessMainWindow):
             self.write_to_status_bar("No Active Data to view")
         else:
             active = active.describe(include="all")
-            self.table_viewer = TableViewer(self.dataexplorer, active, datamodel.active)
+            self.table_viewer = TableViewer(self.dataexplorer, active, 
+                                            f"{datamodel.active} Statistics")
 
     def _on_import_data_from_file(self):
         self._importer = DataImporter(self.dataexplorer)
@@ -404,7 +405,7 @@ class DataExplorerGUI(FramelessMainWindow):
             lambda: self.dataexplorer.plotter.correlmatrix_plotter()
         )
 
-        regression_plot_button = QPushButton("Regression")
+        regression_plot_button = QPushButton("Linear Regression")
         _ = regression_plot_button.clicked.connect(
             lambda: self.dataexplorer.plotter.regression_plotter()
         )

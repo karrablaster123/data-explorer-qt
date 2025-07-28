@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QTableView, QVBoxLayout, QWidget
 class TableViewer:
     def __init__(self, dataexplorer, data: pd.DataFrame, name: str):
         self.dataexplorer = dataexplorer
-        self.table_viewer = self.dataexplorer.get_widget()
+        self.table_viewer = self.dataexplorer.get_widget(detached=True)
         self.table_viewer.setObjectName("TableViewer")
         self.table_viewer.setWindowTitle(f"Table Viewer: {name}")
         self.table_viewer.setGeometry(100, 100, 800, 400)

@@ -10,6 +10,9 @@ from typing import Any, Callable, final
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QWidget
+from qframelesswindow import FramelessWindow
+
+from data_explorer_qt.guihelper import CustomTitleBar
 
 from . import setqtapi  # noqa
 from .config.readconfig import CONFIG
@@ -125,8 +128,14 @@ class DataExplorer:
     def closeEvent(self):
         self.app.quit()
 
-    def get_widget(self) -> QWidget:
-        widget = QWidget()
+    def get_widget(self, detached: bool=False) -> QWidget:
+        if detached:
+            widget = FramelessWindow()
+            cust_title = CustomTitleBar(widget)
+            widget.setWindowTitle = cust_title.changeTitle
+            widget.setTitleBar(cust_title)
+        else:
+            widget = QWidget()
         widget.setObjectName("StandardWidget")
         widget.setStyleSheet(self.stylesheet)
         return widget

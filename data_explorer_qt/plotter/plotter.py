@@ -49,11 +49,15 @@ from .foundation import (
     LINE_STYLES,
     MARKERS,
     PALETTE_TYPES,
+    REGRESSION_MAX_DEGREE,
+    REGRESSION_MIN_DEGREE,
     SORT_CATEGORIES,
     VIOLIN_INNER,
     EmbeddedDynamicPlot,
     PlottingDialog,
     TickParams,
+    get_dataframe_X_for_degree,
+    get_dataframe_X_with_interaction,
 )
 
 if typing.TYPE_CHECKING:
@@ -84,7 +88,7 @@ class Plotter:
         self.count_dialog: CountPlotDialog | None = None
         self.corrplot_dialog: CorrPlotDialog | None = None
         self.lineplot_dialog: LineDialog | None = None
-        self.regression_dialog: RegressionDialog | None = None
+        self.linear_regression_dialog: LinearRegressionDialog | None = None
         self.x_tick_spinbox: QDoubleSpinBox = QDoubleSpinBox(
             minimum=0.0, maximum=40.0, value=0.0, singleStep=1.0
         )
@@ -205,7 +209,7 @@ class Plotter:
         if datastore is None:
             self.error("You need a valid active dataset to do this.")
             return
-        self.regression_dialog = RegressionDialog(self.dataexplorer, datastore)
+        self.linear_regression_dialog = LinearRegressionDialog(self.dataexplorer, datastore)
 
     def build_plot_settings_page(self):
         layout = self.dataexplorer.gui.plot_settings_layout
@@ -250,13 +254,13 @@ class Plotter:
             "X-Axis Grid Colour", self.x_grid_colour_combobox
         )
         x_grid_alpha_slider = get_label_widget_row_(
-            "X-Axis Grid Opacity", self.x_grid_alpha_slider
+            "X-Axis Grid Opacity", self.x_grid_alpha_slider, setStretch=True
         )
         y_grid_colour_combobox = get_label_widget_row_(
             "Y-Axis Grid Colour", self.y_grid_colour_combobox
         )
         y_grid_alpha_slider = get_label_widget_row_(
-            "Y-Axis Grid Opacity", self.y_grid_alpha_slider
+            "Y-Axis Grid Opacity", self.y_grid_alpha_slider, setStretch=True
         )
         qualitative_palette_combobox = get_label_widget_row_(
             "Qualitative Palette", self.qualitative_palette_combobox
@@ -440,11 +444,11 @@ class HistDialog(PlottingDialog):
         build_layout_with_callbacks(
             radio_layout,
             [
-                self.bin_auto,
-                self.bin_num,
-                self.bin_num_spinbox,
-                self.bin_edges,
-                self.bin_edges_line_edit,
+                (self.bin_auto, 1),
+                (self.bin_num, 1),
+                (self.bin_num_spinbox, 1),
+                (self.bin_edges, 1),
+                (self.bin_edges_line_edit, 1),
             ],
             self.on_widget_change,
         )
@@ -476,7 +480,7 @@ class HistDialog(PlottingDialog):
         build_layout_with_callbacks(
             vbox_widget,
             [
-                [alpha_slider, plot_statistic_combobox, multiple_combobox],
+                [( alpha_slider, 1 ), ( plot_statistic_combobox, 1 ), ( multiple_combobox, 1 )],
                 [radio_layout],
                 [n_cols_spinbox],
                 [self.fill_checkbox, self.legend_checkbox, self.rugplot_checkbox],
@@ -812,8 +816,8 @@ class ScatterDialog(PlottingDialog):
         build_layout_with_callbacks(
             vbox_widget,
             [
-                [multi_y_handler_combo_box, n_cols_spinbox],
-                [alpha_slider, marker_combobox],
+                [( multi_y_handler_combo_box, 1 ), ( n_cols_spinbox, 1 )],
+                [( alpha_slider, 1 ), ( marker_combobox, 1 )],
                 [palette_type_combobox],
             ],
             self.on_widget_change,
@@ -1316,10 +1320,10 @@ class CatPlotDialog(PlottingDialog):
                 [categorical_column_combobox, continuous_column_combobox],
                 [hue_column_combobox, col_column_combobox, row_column_combobox],
                 [
-                    self.log_y_checkbox,
-                    self.log_x_checkbox,
-                    self.legend_checkbox,
-                    n_cols_spinbox,
+                    ( self.log_y_checkbox, 1 ),
+                    ( self.log_x_checkbox, 1 ),
+                    ( self.legend_checkbox, 1 ),
+                    ( n_cols_spinbox, 1 ),
                 ],
                 [palette_type_combobox],
                 [collapsible],
@@ -2257,7 +2261,7 @@ class CorrPlotDialog(PlottingDialog):
     @typing.override
     def on_plot(self):
         super().on_plot()
-        self.plotting_data = self.plotting_data[
+        self.plotting_data = self.plotting_data[ # pyright: ignore[reportAttributeAccessIssue]
             self.datastore.numeric_columns + self.datastore.datetime_columns
         ]
         self.variable_columns = self.variable_columns_combobox.currentData()
@@ -2279,12 +2283,12 @@ class CorrPlotDialog(PlottingDialog):
 
         if len(self.y_columns) > 0:
             self.plotting_data = self.plotting_data.corr(self.correl_statistic)
-            self.plotting_data = self.plotting_data[
+            self.plotting_data = self.plotting_data[ # pyright: ignore[reportAttributeAccessIssue]
                 self.plotting_data.index.isin(self.y_columns)
             ]
-            self.plotting_data = self.plotting_data[self.variable_columns]
+            self.plotting_data = self.plotting_data[self.variable_columns] # pyright: ignore[reportAttributeAccessIssue]
         else:
-            self.plotting_data = self.plotting_data[self.variable_columns].corr(
+            self.plotting_data = self.plotting_data[self.variable_columns].corr( # pyright: ignore[reportAttributeAccessIssue]
                 self.correl_statistic
             )
 
@@ -2781,25 +2785,29 @@ class RegressionPlotMode(Enum):
 
 
 @typing.final
-class RegressionDialog(PlottingDialog):
+class LinearRegressionDialog(PlottingDialog):
     x_column: str = ""
     x_columns: list[str] = []
     y_column: str = ""
     alpha: float = 1.0
     add_constant: bool = False
+    degree_of_polynomial: int = 1
+    add_interactions: bool = False
+    add_firstorder_interactions: bool = False
     marker: str = MARKERS[1]
     linestyle: str = LINE_STYLES[0]
     plot_mode: RegressionPlotMode = RegressionPlotMode.INVALID
     regression_results = None
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore"):
-        super().__init__(dataexplorer, datastore, "Regression")
+        super().__init__(dataexplorer, datastore, "Linear Regression")
         self.resize(800, 800)
 
         get_label_widget_row_ = partial(
             get_label_widget_row_callback, callback=self.on_widget_change
         )
 
+        top_spacer = QSpacerItem(20, 30)
         self.x_columns_combobox = self.setup_column_combobox(True, True)
         x_columns_combobox = get_label_widget_row_(
             "X Axis Variable", self.x_columns_combobox
@@ -2813,8 +2821,15 @@ class RegressionDialog(PlottingDialog):
             "Y Axis Variables", self.y_column_combobox
         )
 
-        self.add_constant_checkbox = QCheckBox("Add Constant?")
+        self.degree_of_polynomial_spinbox = QSpinBox(minimum=REGRESSION_MIN_DEGREE,
+                                                     maximum=REGRESSION_MAX_DEGREE,
+                                                     value=self.degree_of_polynomial)
+        degree_of_polynomial_spinbox = get_label_widget_row_("Degree of Polynomial",
+                                                             self.degree_of_polynomial_spinbox)
+        self.add_constant_checkbox = QCheckBox("Add Constant")
         self.add_constant_checkbox.setChecked(True)
+        self.add_interactions_checkbox = QCheckBox("Add interaction variables")
+        self.add_firstorder_interactions_checkbox = QCheckBox("Only add first-order interaction variables")
 
         mid_spacer = QSpacerItem(20, 100)
 
@@ -2866,8 +2881,10 @@ class RegressionDialog(PlottingDialog):
         build_layout_with_callbacks(
             self._layout,
             [
+                [top_spacer],
                 [x_columns_combobox, y_column_combobox],
-                [self.add_constant_checkbox],
+                [degree_of_polynomial_spinbox],
+                [self.add_constant_checkbox, self.add_interactions_checkbox, self.add_firstorder_interactions_checkbox],
                 [mid_spacer],
                 [collapsible],
                 [plot_button, dynamic_plot_button],
@@ -2897,8 +2914,11 @@ class RegressionDialog(PlottingDialog):
         self.plot_mode = RegressionPlotMode.INVALID
         self.x_columns = self.x_columns_combobox.currentData()
         self.y_column = self.y_column_combobox.currentText()
+        self.degree_of_polynomial = self.degree_of_polynomial_spinbox.value()
 
         self.add_constant = self.add_constant_checkbox.isChecked()
+        self.add_interactions = self.add_interactions_checkbox.isChecked()
+        self.add_firstorder_interactions = self.add_firstorder_interactions_checkbox.isChecked()
         self.alpha = self.alpha_slider.value()
         self.marker = self.marker_combobox.currentText()
         self.linestyle = self.linestyle_combobox.currentText()
@@ -2909,6 +2929,8 @@ class RegressionDialog(PlottingDialog):
 
         self.debug("Plotting RegressionPlot:")
         self.debug(f"{self.x_columns} {self.y_column}")
+        self.debug(f"{self.add_constant} {self.alpha} {self.marker} {self.linestyle}")
+        self.debug(f"{self.degree_of_polynomial} {self.add_interactions} {self.add_firstorder_interactions}")
 
         if len(self.x_columns) > 1:
             self.plot_mode = RegressionPlotMode.MULTIPLE_X
@@ -2917,6 +2939,13 @@ class RegressionDialog(PlottingDialog):
             self.x_column = self.x_columns[0]
 
         X = self.plotting_data[self.x_columns].copy()
+        X, generated_columns = get_dataframe_X_for_degree(X, self.degree_of_polynomial)
+        if self.add_interactions:
+            if self.add_firstorder_interactions:
+                X = get_dataframe_X_with_interaction(X, generated_columns)
+            else:
+                X = get_dataframe_X_with_interaction(X, [])
+
         Y = self.plotting_data[[self.y_column]].copy()
         if self.add_constant:
             X = sm.add_constant(X)

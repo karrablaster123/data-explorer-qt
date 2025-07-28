@@ -60,13 +60,13 @@ def build_grid_layout(
 
 
 def get_dynamic_scroll_area(
-    widget: QWidget | Callable[[], QWidget], width: int | None = None
+    widget: QWidget | Callable[[bool], QWidget], width: int | None = None
 ) -> tuple[QScrollArea, QWidget]:
     scroll_area = QScrollArea()
     scroll_area.setObjectName("ScrollArea")
     scroll_area.setWidgetResizable(True)
     if callable(widget):
-        widget = widget()
+        widget = widget(False)
     scroll_area.setWidget(widget)
     if width:
         height = widget.height()
@@ -75,18 +75,22 @@ def get_dynamic_scroll_area(
     return (scroll_area, widget)
 
 
-def get_label_widget_row(label: str, widget: QWidget) -> QHBoxLayout:
+def get_label_widget_row(label: str, widget: QWidget, setStretch: bool=False) -> QHBoxLayout:
     qlabel = QLabel(label)
     layout = QHBoxLayout()
-    build_layout(layout, [qlabel, widget])
+    if setStretch:
+        build_layout(layout, [( qlabel, 1 ), ( widget, 1 )])
+    else:
+        build_layout(layout, [qlabel, widget])
     return layout
 
 
 def get_label_widget_row_callback(
-    label: str, widget: QWidget, callback: Callable[[], None]
+    label: str, widget: QWidget, callback: Callable[[], None],
+    setStretch: bool=False
 ) -> QHBoxLayout:
     add_callback_to_standard_signal([widget], callback)
-    return get_label_widget_row(label, widget)
+    return get_label_widget_row(label, widget, setStretch)
 
 
 def build_layout_with_callbacks(

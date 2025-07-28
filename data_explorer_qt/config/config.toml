@@ -381,6 +381,22 @@ QComboBox = """
     }
 """
 
+QSpinBox = """
+    QSpinBox {
+        border: 1px solid #323232;
+        border-radius: 4px;
+        background-color: #464646;
+        color: #E0E0E0;
+    }
+"""
+QDoubleSpinBox = """
+    QDoubleSpinBox {
+        border: 1px solid #323232;
+        border-radius: 4px;
+        background-color: #464646;
+        color: #E0E0E0;
+    }
+"""
 [Themes.Dark.Custom]
 
 Sidebar = """

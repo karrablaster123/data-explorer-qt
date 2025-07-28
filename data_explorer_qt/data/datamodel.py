@@ -166,7 +166,8 @@ class DataStore:
         return gui
 
     def _filter_widget_dialog(self):
-        self._select_column = self.dataexplorer.get_widget()
+        self._select_column = self.dataexplorer.get_widget(detached=True)
+        self._select_column.setWindowTitle("Select column to filter")
         layout = QVBoxLayout()
         self._select_column.resize(200, 200)
         label = QLabel("Choose a column")
@@ -258,7 +259,8 @@ class DataStore:
         return gui
 
     def _num_cat_dialog(self):
-        self._select_column_nc = self.dataexplorer.get_widget()
+        self._select_column_nc = self.dataexplorer.get_widget(detached=True)
+        self._select_column_nc.setWindowTitle("Choose a numeric column to convert")
         layout = QVBoxLayout()
         self._select_column_nc.resize(200, 200)
         label = QLabel("Choose a column")
