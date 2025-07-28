@@ -222,6 +222,7 @@ class PlottingDialog(FramelessWindow):
         cust_title = CustomTitleBar(self)
         self.setTitleBar(cust_title)
         self.setObjectName("StandardWidget")
+        cust_title.changeTitle(f"{name} Plotting Dialog")
         self.dataexplorer: "DataExplorer" = dataexplorer
         self.debug: Callable[[str], None] = dataexplorer.debug
         self.error: Callable[[str], None] = dataexplorer.error
