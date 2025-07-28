@@ -132,7 +132,6 @@ class DataExplorer:
         if detached:
             widget = FramelessWindow()
             cust_title = CustomTitleBar(widget)
-            widget.setWindowTitle = cust_title.changeTitle
             widget.setTitleBar(cust_title)
         else:
             widget = QWidget()

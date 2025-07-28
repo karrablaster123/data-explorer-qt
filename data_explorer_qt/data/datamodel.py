@@ -167,9 +167,10 @@ class DataStore:
 
     def _filter_widget_dialog(self):
         self._select_column = self.dataexplorer.get_widget(detached=True)
-        self._select_column.setWindowTitle("Select column to filter")
+        self._select_column.setWindowTitle("Filter Column")
+        self._select_column.titleBar.changeTitle("Select column to filter") # pyright: ignore[reportAttributeAccessIssue]
         layout = QVBoxLayout()
-        self._select_column.resize(200, 200)
+        self._select_column.resize(500, 300)
         label = QLabel("Choose a column")
         self._column_chosen = QComboBox()
         self._column_chosen.addItems(self.columns)
@@ -260,7 +261,8 @@ class DataStore:
 
     def _num_cat_dialog(self):
         self._select_column_nc = self.dataexplorer.get_widget(detached=True)
-        self._select_column_nc.setWindowTitle("Choose a numeric column to convert")
+        self._select_column_nc.setWindowTitle("Numeric Converter")
+        self._select_column_nc.titleBar.changeTitle("Choose a numeric column to convert") # pyright: ignore[reportAttributeAccessIssue]
         layout = QVBoxLayout()
         self._select_column_nc.resize(200, 200)
         label = QLabel("Choose a column")

@@ -134,7 +134,7 @@ class EmbeddedDynamicPlot(QWidget):
         parent: "PlottingDialog",
     ):
         super().__init__()
-        top_spacer = QSpacerItem(20, 80)
+        top_spacer = QSpacerItem(20, 50)
         self.setWindowTitle(name)
         self.debug = dataexplorer.debug
         self.error = dataexplorer.error
@@ -218,11 +218,12 @@ class PlottingDialog(FramelessWindow):
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore", name: str):
         super().__init__()
-        cust_title = CustomTitleBar(self)
-        self.setWindowTitle = cust_title.changeTitle
-        self.setTitleBar(cust_title)
-        self.setObjectName("StandardWidget")
         self.setWindowTitle(f"{name} Plotting Dialog")
+        cust_title = CustomTitleBar(self)
+        self.changeTitle = cust_title.changeTitle
+        self.setTitleBar(cust_title)
+        self.changeTitle(f"{name} Plotting Dialog")
+        self.setObjectName("StandardWidget")
         self.dataexplorer: "DataExplorer" = dataexplorer
         self.debug: Callable[[str], None] = dataexplorer.debug
         self.error: Callable[[str], None] = dataexplorer.error

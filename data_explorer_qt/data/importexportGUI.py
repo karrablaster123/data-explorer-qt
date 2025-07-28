@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QPushButton,
     QRadioButton,
+    QSpacerItem,
     QVBoxLayout,
     QWidget,
 )
@@ -74,6 +75,8 @@ class DataImporter:
         self._validate_import_widget = self._create_widget(800, 600)
         self.layout = QVBoxLayout(self._validate_import_widget)
         self.layout.setSpacing(5)
+
+        top_spacer = QSpacerItem(20, 20)
 
         top_label = QLabel("Data Details")
         top_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
@@ -139,6 +142,7 @@ class DataImporter:
         build_layout(radio_button_vbox, [*self.default_custom_radio_button])
 
         widget_list = [
+            top_spacer,
             top_label,
             shape_label,
             columns_scroll_area,
@@ -314,6 +318,7 @@ class DataImporter:
         widget = self.dataexplorer.get_widget(detached=True)
         widget.setObjectName("DataImporter")
         widget.setWindowTitle("Data Importer")
+        widget.titleBar.changeTitle("Data Importer") # pyright: ignore[reportAttributeAccessIssue]
         widget.resize(w, h)
         widget.setFont(QFont(self.dataexplorer.font, self.dataexplorer.font_size))
         self.dataexplorer.owned_widgets.append(widget)
