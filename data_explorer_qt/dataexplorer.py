@@ -128,7 +128,7 @@ class DataExplorer:
     def closeEvent(self):
         self.app.quit()
 
-    def get_widget(self, detached: bool=False) -> QWidget:
+    def get_widget(self, detached: bool = False) -> QWidget:
         if detached:
             widget = FramelessWindow()
             cust_title = CustomTitleBar(widget)

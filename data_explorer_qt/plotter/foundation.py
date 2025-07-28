@@ -12,7 +12,7 @@ from matplotlib.backends.backend_qt import NavigationToolbar2QT
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PySide6.QtGui import QCloseEvent
-from PySide6.QtWidgets import QHBoxLayout, QTextEdit, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QSpacerItem, QTextEdit, QVBoxLayout, QWidget
 from qframelesswindow import FramelessWindow
 from seaborn import FacetGrid
 
@@ -121,7 +121,7 @@ class TickParams:
 
 
 @typing.final
-class EmbeddedDynamicPlot(FramelessWindow):
+class EmbeddedDynamicPlot(QWidget):
     filter_display: QTextEdit
     plot: QWidget
     figure: Figure
@@ -134,9 +134,7 @@ class EmbeddedDynamicPlot(FramelessWindow):
         parent: "PlottingDialog",
     ):
         super().__init__()
-        cust_title = CustomTitleBar(self)
-        self.setWindowTitle = cust_title.changeTitle
-        self.setTitleBar(cust_title)
+        top_spacer = QSpacerItem(20, 80)
         self.setWindowTitle(name)
         self.debug = dataexplorer.debug
         self.error = dataexplorer.error
@@ -146,7 +144,6 @@ class EmbeddedDynamicPlot(FramelessWindow):
         self.resize(1200, 1200)
         self.setStyleSheet(dataexplorer.stylesheet)
         self.datastore = datastore
-        self._layout = QHBoxLayout(self)
         self.filter_display = QTextEdit()
         self.filter_display.setReadOnly(True)
         self.filter_display.setText(self._generate_filter_text())
@@ -162,8 +159,10 @@ class EmbeddedDynamicPlot(FramelessWindow):
 
         build_layout(self.plot_vbox, [self.plot_toolbar, self.plot])
 
-        self._layout.addWidget(self.plot_subwidget, stretch=1)
-        self._layout.addWidget(self.filter_display)
+        base_layout = QVBoxLayout(self)
+        self._layout = QHBoxLayout()
+        build_layout(base_layout, [top_spacer, self._layout])
+        build_layout(self._layout, [(self.plot_subwidget, 1), self.filter_display])
 
         self.show()
 
@@ -330,10 +329,12 @@ class PlottingDialog(FramelessWindow):
         return super().closeEvent(event)
 
 
-def get_dataframe_X_for_degree(df: pd.DataFrame, degree: int) -> tuple[pd.DataFrame, list[str]]:
+def get_dataframe_X_for_degree(
+    df: pd.DataFrame, degree: int
+) -> tuple[pd.DataFrame, list[str]]:
     generated_columns = []
     columns = list(df.columns)
-    for deg in range(2, degree+1): # 2, 3, 4, ...
+    for deg in range(2, degree + 1):  # 2, 3, 4, ...
         cols_this_iter = []
         new_cols_this_iter = []
         for col in columns:
@@ -343,9 +344,12 @@ def get_dataframe_X_for_degree(df: pd.DataFrame, degree: int) -> tuple[pd.DataFr
             new_cols_this_iter.append(new_col_name)
         df[new_cols_this_iter] = df[cols_this_iter] ** deg
         generated_columns.extend(new_cols_this_iter)
-    return ( df, generated_columns )
+    return (df, generated_columns)
 
-def get_dataframe_X_with_interaction(df: pd.DataFrame, generated_columns: list[str]) -> pd.DataFrame:
+
+def get_dataframe_X_with_interaction(
+    df: pd.DataFrame, generated_columns: list[str]
+) -> pd.DataFrame:
     columns = set(df.columns) - set(generated_columns)
     generated_columns = []
     for col_A, col_B in product(columns, columns):
@@ -355,7 +359,6 @@ def get_dataframe_X_with_interaction(df: pd.DataFrame, generated_columns: list[s
                 continue
             assert new_col_name not in columns
             df[new_col_name] = df[col_A] * df[col_B]
-            generated_columns.extend([new_col_name,
-                                      f"{col_B}*{col_A}"])
+            generated_columns.extend([new_col_name, f"{col_B}*{col_A}"])
 
     return df
