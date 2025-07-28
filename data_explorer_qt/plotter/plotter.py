@@ -165,49 +165,42 @@ class Plotter:
     def histogram_plotter(self):
         datastore = self.dataexplorer.datamodel.active_dataset
         if datastore is None:
-            self.error("You need a valid active dataset to do this.")
             return
         self.hist_dialog = HistDialog(self.dataexplorer, datastore)
 
     def scatterplot_plotter(self):
         datastore = self.dataexplorer.datamodel.active_dataset
         if datastore is None:
-            self.error("You need a valid active dataset to do this.")
             return
         self.scatter_dialog = ScatterDialog(self.dataexplorer, datastore)
 
     def catplot_plotter(self):
         datastore = self.dataexplorer.datamodel.active_dataset
         if datastore is None:
-            self.error("You need a valid active dataset to do this.")
             return
         self.cat_dialog = CatPlotDialog(self.dataexplorer, datastore)
 
     def countplot_plotter(self):
         datastore = self.dataexplorer.datamodel.active_dataset
         if datastore is None:
-            self.error("You need a valid active dataset to do this.")
             return
         self.count_dialog = CountPlotDialog(self.dataexplorer, datastore)
 
     def correlmatrix_plotter(self):
         datastore = self.dataexplorer.datamodel.active_dataset
         if datastore is None:
-            self.error("You need a valid active dataset to do this.")
             return
         self.corrplot_dialog = CorrPlotDialog(self.dataexplorer, datastore)
 
     def lineplot_plotter(self):
         datastore = self.dataexplorer.datamodel.active_dataset
         if datastore is None:
-            self.error("You need a valid active dataset to do this.")
             return
         self.lineplot_dialog = LineDialog(self.dataexplorer, datastore)
 
     def regression_plotter(self):
         datastore = self.dataexplorer.datamodel.active_dataset
         if datastore is None:
-            self.error("You need a valid active dataset to do this.")
             return
         self.linear_regression_dialog = LinearRegressionDialog(
             self.dataexplorer, datastore
