@@ -10,7 +10,6 @@ class TableViewer:
         self.table_viewer = self.dataexplorer.get_widget(detached=True)
         self.table_viewer.setObjectName("TableViewer")
         self.table_viewer.setWindowTitle(f"Table Viewer: {name}")
-        self.table_viewer.titleBar.changeTitle(f"Table Viewer: {name}")
         self.table_viewer.setGeometry(100, 100, 800, 400)
         self.table_viewer.setFont(QFont(dataexplorer.font, dataexplorer.font_size))
         self.table_view = QTableView()

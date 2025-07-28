@@ -165,6 +165,7 @@ class DataImporter:
         self.dtypes: dict[str, str] = {}
         self.layout = QVBoxLayout()
 
+        top_spacer = QSpacerItem(20, 20)
         dtype_grid = QGridLayout()
         self.dtype_widgets: dict[str, QComboBox] = {}
 
@@ -204,7 +205,7 @@ class DataImporter:
             self.dataexplorer.get_widget, width=750
         )
         content_widget.setLayout(dtype_grid)
-        build_layout(self.layout, [scroll_content_widget, button])
+        build_layout(self.layout, [top_spacer, scroll_content_widget, button])
         self._dtype_widget.setLayout(self.layout)
         self._dtype_widget.show()
 
@@ -241,6 +242,7 @@ class DataImporter:
         nan_grid = QGridLayout()
         self.nan_widgets = {}
 
+        top_spacer = QSpacerItem(20, 20)
         nan_columns: Iterable[str] = self.data.columns[self.data.isnull().any()]
 
         if len(nan_columns) == 0:
@@ -287,7 +289,7 @@ class DataImporter:
             self.dataexplorer.get_widget, width=750
         )
         content_widget.setLayout(nan_grid)
-        build_layout(self.layout, [label, scroll_content_widget, button])
+        build_layout(self.layout, [top_spacer, label, scroll_content_widget, button])
         self._nan_widget.setLayout(self.layout)
         self._nan_widget.show()
 
@@ -318,7 +320,6 @@ class DataImporter:
         widget = self.dataexplorer.get_widget(detached=True)
         widget.setObjectName("DataImporter")
         widget.setWindowTitle("Data Importer")
-        widget.titleBar.changeTitle("Data Importer") # pyright: ignore[reportAttributeAccessIssue]
         widget.resize(w, h)
         widget.setFont(QFont(self.dataexplorer.font, self.dataexplorer.font_size))
         self.dataexplorer.owned_widgets.append(widget)
