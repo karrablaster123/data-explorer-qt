@@ -640,7 +640,6 @@ class HistDialog(PlottingDialog):
                     palette=self.plot_palette,
                     stat=self.plot_statistic,
                     bins=self.bins,
-                    multiple=self.multiple,
                     alpha=self.alpha,
                     cbar=self.cbar,
                 )
