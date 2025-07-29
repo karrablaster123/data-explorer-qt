@@ -374,7 +374,7 @@ class DataExplorerGUI(FramelessMainWindow):
         self.num_to_cat_page_layout.addWidget(numCatGUI.num_to_cat_page)
         numCatGUI.num_to_cat_page.setObjectName("ContentArea")
         self.num_to_cat_pages[name] = numCatGUI.num_to_cat_page
-        self.num_to_cat_pages[name].setVisible(True)
+        self.num_to_cat_pages[name].setVisible(False)
 
     def _plotting_page(self) -> QWidget:
         plotting_page = self.dataexplorer.get_widget()
