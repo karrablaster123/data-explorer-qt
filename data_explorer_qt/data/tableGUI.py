@@ -1,7 +1,7 @@
 import pandas as pd
 from PySide6.QtCore import QAbstractTableModel, Qt
 from PySide6.QtGui import QFont
-from PySide6.QtWidgets import QTableView, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QSpacerItem, QTableView, QVBoxLayout, QWidget
 
 
 class TableViewer:
@@ -16,6 +16,7 @@ class TableViewer:
         self.model = TableViewModel(data)
         self.table_view.setModel(self.model)
         layout = QVBoxLayout()
+        layout.addSpacerItem(QSpacerItem(20, 20))
         layout.addWidget(self.table_view)
         self.table_viewer.setLayout(layout)
         self.table_viewer.show()
