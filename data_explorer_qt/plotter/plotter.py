@@ -33,6 +33,7 @@ from PySide6.QtWidgets import (
 )
 from statsmodels.regression.linear_model import RegressionResultsWrapper
 from superqt import QCollapsible, QLabeledDoubleSlider
+import pandas as pd
 
 from ..guihelper import (
     MultiSelectComboBox,
@@ -89,6 +90,7 @@ class Plotter:
         self.corrplot_dialog: CorrPlotDialog | None = None
         self.lineplot_dialog: LineDialog | None = None
         self.linear_regression_dialog: LinearRegressionDialog | None = None
+        self.pair_grid_dialog: PairGridDialog | None = None
         self.x_tick_spinbox: QDoubleSpinBox = QDoubleSpinBox(
             minimum=0.0, maximum=40.0, value=0.0, singleStep=1.0
         )
@@ -206,6 +208,13 @@ class Plotter:
             self.dataexplorer, datastore
         )
 
+    def pair_grid_plotter(self):
+        datastore = self.dataexplorer.datamodel.active_dataset
+        if datastore is None:
+            return
+        self.pair_grid_dialog = PairGridDialog(
+            self.dataexplorer, datastore
+        )
     def build_plot_settings_page(self):
         layout = self.dataexplorer.gui.plot_settings_layout
         layout.setSpacing(5)
@@ -3050,6 +3059,283 @@ class LinearRegressionDialog(PlottingDialog):
                 self.dataexplorer,
                 self.datastore,
                 f"Regression Plot: {self.datastore.name}",
+                self,
+            )
+            self.dynamic_callback_id = self.datastore.add_filter_change_callback(
+                self.redraw_dynamic_plot
+            )
+            self.redraw_dynamic_plot()
+        else:
+            self.error(
+                "You cannot make more than two dynamic plots for each plotting widget dialog."
+            )
+
+    @typing.override
+    def redraw_dynamic_plot(self):
+        if self.dynamic_plot_widget is None:
+            self.debug("Incorrect call of self.dynamic_plot_widget")
+            return
+        self.on_plot()
+        try:
+            plot = self.plotter()
+            self.dynamic_plot_widget.update_dynamic_widget(plot)
+        except Exception:
+            self.error("Unable to plot. Err: " + traceback.format_exc())
+            return
+
+    @typing.override
+    def closeEvent(self, event: QCloseEvent):
+        if self.dynamic_plot_widget is not None:
+            _ = self.dynamic_plot_widget.close()
+
+        return super().closeEvent(event)
+
+class PairGridPlots(Enum):
+    NONE = ""
+    SCATTER = "scatterplot"
+    REGRESSION = "regression"
+    HISTOGRAM = "histogram"
+    KDE = "kernel density"
+
+@typing.final
+class PairGridDialog(PlottingDialog):
+    variables: list[str] = []
+    diagonal_plot: PairGridPlots = PairGridPlots.NONE
+    upper_plot: PairGridPlots = PairGridPlots.NONE
+    lower_plot: PairGridPlots = PairGridPlots.NONE
+    scatter_hue: pd.Series | None = None
+    scatter_size: pd.Series | None = None
+    scatter_style: pd.Series | None = None
+    scatter_opacity: float = 1.0
+    histogram_hue: pd.Series | None = None
+    histogram_opacity: float = 1.0
+    kde_hue: pd.Series | None = None
+    add_legend: bool = False
+    regression_order: int = 1
+    
+    def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore"):
+        super().__init__(dataexplorer, datastore, "Pair Grid Plotting Dialog")
+        self.resize(800, 800)
+
+        get_label_widget_row_ = partial(
+            get_label_widget_row_callback, callback=self.on_widget_change
+        )
+        self.variable_columns_combobox = self.setup_column_combobox(True, True)
+        variable_columns_combobox = get_label_widget_row_("Variables: ", self.variable_columns_combobox)
+
+        self.diagonal_plot_combobox = self.get_plot_combobox()
+        diagonal_plot_combobox = get_label_widget_row_("Diagonal: ", self.diagonal_plot_combobox)
+
+        self.upper_plot_combobox = self.get_plot_combobox()
+        upper_plot_combobox = get_label_widget_row_("Upper Triangle: ", self.upper_plot_combobox)
+
+        self.lower_plot_combobox = self.get_plot_combobox()
+        lower_plot_combobox = get_label_widget_row_("Lower Triangle: ", self.lower_plot_combobox)
+
+        scatter = QCollapsible("Scatter Additional Settings")
+        scatter_widget = self.dataexplorer.get_widget()
+        scatter.addWidget(scatter_widget)
+        scatter_widget_layout = QVBoxLayout(scatter_widget)
+
+        self.scatter_hue_combobox = self.setup_column_combobox(False, False)
+        scatter_hue_combobox = get_label_widget_row_("Hue: ", self.scatter_hue_combobox)
+        self.scatter_size_combobox = self.setup_column_combobox(False, False)
+        scatter_size_combobox = get_label_widget_row_("Size: ", self.scatter_size_combobox)
+        self.scatter_style_combobox = self.setup_column_combobox(False, False)
+        scatter_style_combobox = get_label_widget_row_("Style: ", self.scatter_style_combobox)
+        self.scatter_opacity_slider = QLabeledDoubleSlider()
+        self.scatter_opacity_slider.setObjectName("LabeledRangeSlider")
+        self.scatter_opacity_slider.setValue(1.0)
+        self.scatter_opacity_slider.setRange(0, 1)
+        self.scatter_opacity_slider.setEdgeLabelMode(
+            QLabeledDoubleSlider.EdgeLabelMode.LabelIsValue
+        )
+        scatter_opacity_slider = get_label_widget_row_("Opacity: ", self.scatter_opacity_slider)
+        build_grid_layout(scatter_widget_layout,
+                          [[scatter_hue_combobox, scatter_size_combobox, scatter_style_combobox],
+                           [scatter_opacity_slider]])
+
+        histogram = QCollapsible("Histogram Additional Settings")
+        histogram_widget = self.dataexplorer.get_widget()
+        histogram.addWidget(histogram_widget)
+        histogram_widget_layout = QVBoxLayout(histogram_widget)
+        
+        self.histogram_hue_combobox = self.setup_column_combobox(False, False)
+        histogram_hue_combobox = get_label_widget_row_("Hue: ", self.histogram_hue_combobox)
+        self.histogram_opacity_slider = QLabeledDoubleSlider()
+        self.histogram_opacity_slider.setObjectName("LabeledRangeSlider")
+        self.histogram_opacity_slider.setValue(1.0)
+        self.histogram_opacity_slider.setRange(0, 1)
+        self.histogram_opacity_slider.setEdgeLabelMode(
+            QLabeledDoubleSlider.EdgeLabelMode.LabelIsValue
+        )
+        histogram_opacity_slider = get_label_widget_row_("Opacity: ", self.histogram_opacity_slider)
+        build_grid_layout(histogram_widget_layout,
+                          [[(histogram_hue_combobox, 1), (histogram_opacity_slider, 1)]])
+
+        kde = QCollapsible("KDE Additional Settings")
+        kde_widget = self.dataexplorer.get_widget()
+        kde.addWidget(kde_widget)
+        kde_widget_layout = QVBoxLayout(kde_widget)
+
+        self.kde_hue_combobox = self.setup_column_combobox(False, False)
+        kde_hue_combobox = get_label_widget_row_("Hue: ", self.kde_hue_combobox)
+        build_grid_layout(kde_widget_layout, [[kde_hue_combobox]])
+
+        regression = QCollapsible("Regression Additional Settings")
+        regression_widget = self.dataexplorer.get_widget()
+        regression.addWidget(regression_widget)
+        regression_widget_layout = QVBoxLayout(regression_widget)
+
+        self.regression_order_spinbox = QSpinBox(minimum=REGRESSION_MIN_DEGREE,
+                                         maximum=REGRESSION_MAX_DEGREE,
+                                         value=REGRESSION_MIN_DEGREE)
+        regression_order_spinbox = get_label_widget_row_("Order: ", self.regression_order_spinbox)
+        build_grid_layout(regression_widget_layout, [[regression_order_spinbox]])
+
+        plot_button = QPushButton("Plot")
+        _ = plot_button.clicked.connect(self.plot)
+        dynamic_plot_button = QPushButton("Dynamic Plot")
+        _ = dynamic_plot_button.clicked.connect(self.dynamic_plot)
+
+        build_grid_layout(self._layout, [[variable_columns_combobox],
+                                         [diagonal_plot_combobox, upper_plot_combobox, lower_plot_combobox],
+                                         [scatter],
+                                         [histogram],
+                                         [kde],
+                                         [regression],
+                                         [plot_button, dynamic_plot_button]])
+        self.show()
+
+    def setup_column_combobox(self, mandatory: bool, multi_variable: bool = False):
+        if multi_variable:
+            box = MultiSelectComboBox()
+        else:
+            box = QComboBox()
+        if mandatory:
+            box.addItems(self.datastore.columns)
+        else:
+            box.addItem("")
+            box.addItems(self.datastore.columns)
+        return box
+    
+    def get_plot_combobox(self) -> QComboBox:
+        combobox = QComboBox()
+        text_and_data = [(plot.value, plot) for plot in PairGridPlots]
+        self.add_text_and_data_to_combobox(combobox, text_and_data)
+        return combobox
+
+    def add_text_and_data_to_combobox(self, combobox: QComboBox, text_and_data: list[tuple[str, PairGridPlots]]):
+        for text, data in text_and_data:
+            combobox.addItem(text, data)
+
+    def scatter_plot(self, map_function: typing.Callable):
+        map_function(sns.scatterplot, hue=self.scatter_hue,
+                 size=self.scatter_size, style=self.scatter_style,
+                 alpha=self.scatter_opacity)
+
+    def histogram_plot(self, map_function: typing.Callable):
+        map_function(sns.histplot, hue=self.histogram_hue,
+                     alpha=self.histogram_opacity)
+
+    def kde_plot(self, map_function: typing.Callable):
+        map_function(sns.kdeplot, hue=self.kde_hue)
+
+    def regression_plot(self, map_function: typing.Callable):
+        map_function(sns.regplot, order=self.regression_order)
+    
+    @typing.override
+    def on_plot(self):
+        super().on_plot()
+        self.add_legend = False
+        self.variables = self.variable_columns_combobox.currentData()
+        if len(self.variables) < 2:
+            self.error("Select at least two variables")
+            self.variables = []
+            return
+
+        self.diagonal_plot = self.diagonal_plot_combobox.currentData()
+        self.upper_plot = self.upper_plot_combobox.currentData()
+        self.lower_plot = self.lower_plot_combobox.currentData()
+
+        self.scatter_opacity = self.scatter_opacity_slider.value()
+        scatter_hue = self.scatter_hue_combobox.currentText()
+        scatter_hue = self.get_categorical_column_name(scatter_hue)
+        scatter_style = self.scatter_style_combobox.currentText()
+        scatter_style = self.get_categorical_column_name(scatter_style)
+        scatter_size = self.scatter_size_combobox.currentText()
+        scatter_size = self.get_categorical_column_name(scatter_size)
+        if scatter_hue is None:
+            self.scatter_hue = None
+        else:
+            self.add_legend = True
+            self.scatter_hue = self.plotting_data[scatter_hue]
+        if scatter_style is None:
+            self.scatter_style = None
+        else:
+            self.add_legend = True
+            self.scatter_style = self.plotting_data[scatter_style]
+        if scatter_size is None:
+            self.scatter_size = None
+        else:
+            self.add_legend = True
+            self.scatter_size = self.plotting_data[scatter_size]
+
+        self.histogram_opacity = self.histogram_opacity_slider.value()
+        histogram_hue = self.histogram_hue_combobox.currentText()
+        histogram_hue = self.get_categorical_column_name(histogram_hue)
+        if histogram_hue is None:
+            self.histogram_hue = None
+        else:
+            self.add_legend = True
+            self.histogram_hue = self.plotting_data[histogram_hue]
+
+        kde_hue = self.kde_hue_combobox.currentText()
+        kde_hue = self.get_categorical_column_name(kde_hue)
+        if kde_hue is None:
+            self.kde_hue = None
+        else:
+            self.add_legend = True
+            self.kde_hue = self.plotting_data[kde_hue]
+
+        self.regression_order = self.regression_order_spinbox.value()
+        self.plotting_data = self.plotting_data[self.variables].copy()
+
+    def match_plot_with_func(self, plot_type: PairGridPlots,
+                             map_function: typing.Callable):
+        match plot_type:
+            case PairGridPlots.NONE:
+                pass
+            case PairGridPlots.SCATTER:
+                self.scatter_plot(map_function)
+            case PairGridPlots.REGRESSION:
+                self.regression_plot(map_function)
+            case PairGridPlots.HISTOGRAM:
+                self.histogram_plot(map_function)
+            case PairGridPlots.KDE:
+                self.kde_plot(map_function)
+
+    def plotter(self) -> sns.PairGrid | Figure:
+        if len(self.variables) == 0:
+            return plt.figure()
+        fg = sns.PairGrid(self.plotting_data)
+        self.match_plot_with_func(self.diagonal_plot,
+                                  fg.map_diag)
+        self.match_plot_with_func(self.upper_plot,
+                                  fg.map_upper)
+        self.match_plot_with_func(self.lower_plot,
+                                  fg.map_lower)
+        if self.add_legend:
+            fg.add_legend()
+        return fg
+
+    @typing.override
+    def dynamic_plot(self):
+        if self.dynamic_plot_widget is None:
+            self.dynamic_plot_widget = EmbeddedDynamicPlot(
+                self.dataexplorer,
+                self.datastore,
+                f"Pair Grid Plot: {self.datastore.name}",
                 self,
             )
             self.dynamic_callback_id = self.datastore.add_filter_change_callback(

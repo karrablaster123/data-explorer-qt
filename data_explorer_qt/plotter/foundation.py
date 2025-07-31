@@ -14,7 +14,7 @@ from matplotlib.figure import Figure
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QHBoxLayout, QSpacerItem, QTextEdit, QVBoxLayout, QWidget
 from qframelesswindow import FramelessWindow
-from seaborn import FacetGrid
+from seaborn import FacetGrid, PairGrid
 
 from ..data.dataenums import NumericConversion
 from ..guihelper import CustomTitleBar, build_layout
@@ -294,7 +294,7 @@ class PlottingDialog(FramelessWindow):
     def on_plot(self):
         self._generate_plotting_data()
 
-    def plotter(self) -> Figure | FacetGrid: ...
+    def plotter(self) -> Figure | FacetGrid | PairGrid: ...
 
     def plot(self):
         self.on_plot()

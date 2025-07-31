@@ -415,7 +415,7 @@ class DataExplorerGUI(FramelessMainWindow):
         )
 
         pair_grid_button = QPushButton("Pair Grid")
-        _ = pair_grid_button.clicked.connect(lambda: self._not_implemented())
+        _ = pair_grid_button.clicked.connect(lambda: self.dataexplorer.plotter.pair_grid_plotter())
 
         build_grid_layout(
             plotting_page_layout,
