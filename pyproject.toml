@@ -43,6 +43,3 @@ project_excludes = [
 
 [tool.pyrefly.errors]
 implicitly-defined-attribute = false
-
-[tool.ruff.lint]
-select = ["E", "F", "I"]
