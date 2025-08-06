@@ -1,9 +1,9 @@
 # pyright: reportUnknownMemberType=false
-from itertools import product
 import pprint
 import traceback
 import typing
 from dataclasses import dataclass
+from itertools import product
 from typing import Callable, Literal, override
 
 import matplotlib.pyplot as plt

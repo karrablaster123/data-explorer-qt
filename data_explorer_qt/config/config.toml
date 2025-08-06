@@ -6,21 +6,6 @@ default_theme = "dark"
 fontsize = 12
 plugins = "__PLUGIN_FOLDER_PATH__" # defaults to _root_folder_/plugins
 
-
-["File Types"]
-
-import = [
-    "Excel Files (*.xlsx *.xls *.xlsm)",
-    "CSV (*.csv)",
-    "Parquet (*.parquet)",
-    "Feather (*.feather)"]
-export = [
-    "Excel File (*.xlsx)",
-    "CSV (*.csv)",
-    "Parquet (*.parquet)",
-    "Feather (*.feather)"
-]
-
 [Grid]
 
 grid_max_col = 3

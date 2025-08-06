@@ -1,6 +1,19 @@
 from dataclasses import dataclass
 from enum import Enum
 
+IMPORT_FILE_TYPES = [
+    "Excel Files (*.xlsx *.xls *.xlsm)",
+    "CSV (*.csv)",
+    "Parquet (*.parquet)",
+    "Feather (*.feather)",
+]
+
+EXPORT_FILE_TYPES = [
+    "Excel File (*.xlsx)",
+    "CSV (*.csv)",
+    "Parquet (*.parquet)",
+    "Feather (*.feather)",
+]
 VALID_DTYPES = [
     "Categorical",
     "Numeric",

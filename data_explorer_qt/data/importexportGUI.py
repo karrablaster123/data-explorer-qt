@@ -24,6 +24,8 @@ from PySide6.QtWidgets import (
 
 from ..guihelper import build_layout, get_dynamic_scroll_area, get_label_widget_row
 from .dataenums import (
+    EXPORT_FILE_TYPES,
+    IMPORT_FILE_TYPES,
     NAN_CAT,
     NAN_DATETIME,
     NAN_NUM,
@@ -53,7 +55,7 @@ class DataImporter:
         self.error = dataexplorer.error
         self.debug = dataexplorer.debug
 
-        file_types: list[str] = dataexplorer.config["File Types"]["import"]
+        file_types: list[str] = IMPORT_FILE_TYPES
         file_path: str
         filetype: str
         file_path, filetype = QFileDialog.getOpenFileName(
@@ -171,15 +173,17 @@ class DataImporter:
 
         for i, column in enumerate(self.data.columns):
             try:
-                if numeric_comparator(self.data[column]):
+                data_column = self.data[column]
+                assert isinstance(data_column, pd.Series)
+                if numeric_comparator(data_column):
                     widg = self.dtype_widgets[column] = QComboBox()
                     widg.addItems(VALID_DTYPES)
                     widg.setCurrentText(VALID_DTYPES[1])
-                elif categorical_comparator(self.data[column]):
+                elif categorical_comparator(data_column):
                     widg = self.dtype_widgets[column] = QComboBox()
                     widg.addItems(VALID_DTYPES)
                     widg.setCurrentText(VALID_DTYPES[0])
-                elif datetime_comparator(self.data[column]):
+                elif datetime_comparator(data_column):
                     widg = self.dtype_widgets[column] = QComboBox()
                     widg.addItems(VALID_DTYPES)
                     widg.setCurrentText(VALID_DTYPES[2])
@@ -196,6 +200,10 @@ class DataImporter:
                 )
             except TypeError as e:
                 self.error(f"Error reading column {column}: {e}")
+                self._close_widget(self._dtype_widget)
+                return
+            except AssertionError as e:
+                self.error(f"self.data[{column}] did not return a series {e}")
                 self._close_widget(self._dtype_widget)
                 return
 
@@ -251,16 +259,18 @@ class DataImporter:
 
         for i, column in enumerate(nan_columns):
             try:
-                self.debug(f"{column}: {self.data[column].dtype}")
-                if numeric_comparator(self.data[column]):
+                data_column = self.data[column]
+                assert isinstance(data_column, pd.Series)
+                self.debug(f"{column}: {data_column.dtype}")
+                if numeric_comparator(data_column):
                     widg = self.nan_widgets[column] = QComboBox()
                     widg.addItems(NAN_NUM)
                     widg.setCurrentText(self.default_nan_num)
-                elif categorical_comparator(self.data[column]):
+                elif categorical_comparator(data_column):
                     widg = self.nan_widgets[column] = QComboBox()
                     widg.addItems(NAN_CAT)
                     widg.setCurrentText(self.default_nan_cat)
-                elif datetime_comparator(self.data[column]):
+                elif datetime_comparator(data_column):
                     widg = self.nan_widgets[column] = QComboBox()
                     widg.addItems(NAN_DATETIME)
                     widg.setCurrentText(self.default_nan_dt)
@@ -276,6 +286,10 @@ class DataImporter:
             except TypeError as e:
                 self.error(f"Error reading column {column}: {e}")
                 self._close_widget(self._nan_widget)
+                return
+            except AssertionError as e:
+                self.error(f"self.data[{column}] did not return a series {e}")
+                self._close_widget(self._dtype_widget)
                 return
 
         if self.default_custom_radio_button[0].isChecked():
@@ -372,7 +386,7 @@ def export_data(dataexplorer: "DataExplorer", data: pd.DataFrame):
     file_path, selFilter = QFileDialog.getSaveFileName(
         parent=None,
         caption="Save Data File",
-        filter=";;".join(dataexplorer.config["File Types"]["export"]),
+        filter=";;".join(EXPORT_FILE_TYPES),
     )
     if file_path:
         try:
