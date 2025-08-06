@@ -1,4 +1,4 @@
-# pyright: reportUnknownMemberType=false, reportArgumentType=false
+# pyright: reportUnknownMemberType=false, reportArgumentType=false, reportAttributeAccessIssue=false
 import traceback
 import typing
 from enum import Enum, auto
