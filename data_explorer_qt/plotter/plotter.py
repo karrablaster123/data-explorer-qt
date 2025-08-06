@@ -3046,7 +3046,7 @@ class LinearRegressionDialog(PlottingDialog):
                 ax.legend()
                 ax.set_title(
                     f"Residuals vs {self.y_column}; "
-                    "R^2: {self.regression_results.rsquared:.3f}"
+                    f"R^2: {self.regression_results.rsquared:.3f}"
                 )
                 ax.grid(True)
                 ax.tick_params(
