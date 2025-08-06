@@ -2805,6 +2805,7 @@ class LinearRegressionDialog(PlottingDialog):
     x_column: str = ""
     x_columns: list[str] = []
     y_column: str = ""
+    X: pd.DataFrame = pd.DataFrame()
     alpha: float = 1.0
     add_constant: bool = False
     degree_of_polynomial: int = 1
@@ -2962,10 +2963,9 @@ class LinearRegressionDialog(PlottingDialog):
             f"{self.add_firstorder_interactions}"
         )
 
-        if len(self.x_columns) > 1:
-            self.plot_mode = RegressionPlotMode.MULTIPLE_X
-        else:
-            self.plot_mode = RegressionPlotMode.SINGLE_X
+        Y = self.plotting_data[[self.y_column]].copy()
+
+        if len(self.x_columns) == 1:
             self.x_column = self.x_columns[0]
 
         X = self.plotting_data[self.x_columns].copy()
@@ -2976,7 +2976,11 @@ class LinearRegressionDialog(PlottingDialog):
             else:
                 X = get_dataframe_X_with_interaction(X, [])
 
-        Y = self.plotting_data[[self.y_column]].copy()
+        if len(X.columns) > 1:
+            self.plot_mode = RegressionPlotMode.MULTIPLE_X
+        else:
+            self.plot_mode = RegressionPlotMode.SINGLE_X
+
         if self.add_constant:
             X = sm.add_constant(X)
         try:
@@ -2984,7 +2988,8 @@ class LinearRegressionDialog(PlottingDialog):
             self.regression_results = model.fit()
             summary = self.regression_results.summary()
             self.regression_summary_text.setText(str(summary))
-        except Exception:
+        except Exception as e:
+            self.error(e)
             self.debug(traceback.format_exc())
             self.regression_summary_text.setText("Unsuccessful")
             self.regression_results = None
