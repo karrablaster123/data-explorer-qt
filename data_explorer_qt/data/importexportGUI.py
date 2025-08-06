@@ -135,7 +135,8 @@ class DataImporter:
 
         self.default_custom_radio_button = (
             QRadioButton(
-                "Handle missing values by column data type using defaults (defaults set above)"
+                "Handle missing values by column data type "
+                "using defaults (defaults set above)"
             ),
             QRadioButton("Handle missing values on a per-column basis"),
         )
@@ -196,7 +197,8 @@ class DataImporter:
                 hbox = get_label_widget_row(f"{column}:", widg)
                 dtype_grid.addLayout(hbox, self._row(i), self._col(i))
                 self.debug(
-                    f'Dtype, Row, Col: "{widg.currentText()}", {self._row(i)}, {self._col(i)}'
+                    f'Dtype, Row, Col: "{widg.currentText()}", '
+                    f'{self._row(i)}, {self._col(i)}'
                 )
             except TypeError as e:
                 self.error(f"Error reading column {column}: {e}")
@@ -281,7 +283,8 @@ class DataImporter:
                 hbox = get_label_widget_row(f"{column}:", widg)
                 nan_grid.addLayout(hbox, self._row(i), self._col(i))
                 self.debug(
-                    f'NaN, Row, Col: "{widg.currentText()}", {self._row(i)}, {self._col(i)}'
+                    f'NaN, Row, Col: "{widg.currentText()}", '
+                    f'{self._row(i)}, {self._col(i)}'
                 )
             except TypeError as e:
                 self.error(f"Error reading column {column}: {e}")

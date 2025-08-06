@@ -93,7 +93,9 @@ class DataStore:
                     self.filtered_data, column, filterstore
                 )
                 self.debug(
-                    f"{starting_length - len(self.filtered_data)} rows removed by filter {column} {filterstore.dtype} {filterstore.filter_value}"
+                    f"{starting_length - len(self.filtered_data)} "
+                    "rows removed by filter "
+                    f"{column} {filterstore.dtype} {filterstore.filter_value}"
                 )
 
         delta = init_len - len(self.filtered_data)
@@ -111,7 +113,8 @@ class DataStore:
             )
 
         self.filterGUI.shape_label.setText(
-            f"Filtered - Rows: {self.filtered_data.shape[0]}, Columns: {self.filtered_data.shape[1]}"
+            f"Filtered - Rows: {self.filtered_data.shape[0]},"
+            f"Columns: {self.filtered_data.shape[1]}"
         )
 
         self.replot_callbacks()
@@ -138,11 +141,13 @@ class DataStore:
         name_label = QLabel(name)
         name_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         unfiltered_shape_label = QLabel(
-            f"Unfiltered - Rows: {self.cleaned_data.shape[0]}, Columns: {self.cleaned_data.shape[1]}"
+            f"Unfiltered - Rows: {self.cleaned_data.shape[0]}, "
+            f"Columns: {self.cleaned_data.shape[1]}"
         )
         unfiltered_shape_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
         gui.shape_label = QLabel(
-            f"Filtered - Rows: {self.cleaned_data.shape[0]}, Columns: {self.cleaned_data.shape[1]}"
+            f"Filtered - Rows: {self.cleaned_data.shape[0]}, "
+            f"Columns: {self.cleaned_data.shape[1]}"
         )
         gui.shape_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 

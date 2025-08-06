@@ -272,8 +272,6 @@ class MultiSelectComboBox(QComboBox):
 
         Args:
             delimiter (str): The delimiter to use.
-            space_after (bool): Whether to add a space after the delimiter. Default is True.
-            space_before (bool): Whether to add a space before the delimiter. Default is False.
         """
         sufix = " " if space_after else ""
         prefix = " " if space_before else ""
@@ -466,7 +464,8 @@ class MultiSelectComboBox(QComboBox):
         """Get the currently selected options along with their associated data.
 
         Returns:
-            list: A list of tuples containing the text and data of the currently selected options.
+            list: A list of tuples containing the text and data 
+            of the currently selected options.
                 Each tuple consists of (text, data).
         """
         res = []

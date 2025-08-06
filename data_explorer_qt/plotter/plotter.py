@@ -439,10 +439,13 @@ class HistDialog(PlottingDialog):
         self.bin_edges = QRadioButton("Manually set bin edges")
         self.bin_edges_line_edit = QLineEdit()
         self.bin_edges_line_edit.setPlaceholderText(
-            "1, 2, 3, ... if only variable is set. If Y-variable is also set: 1, 2, 3, ...; 10, 20, 30, ..."
+            "1, 2, 3, ... if only variable is set. "
+            "If Y-variable is also set: 1, 2, 3, ...; 10, 20, 30, ..."
         )
         self.bin_edges_line_edit.setToolTip(
-            "For one variable histogram, use a comma-separated list of values.\nFor two variable histograms, separate the two comma-separated lists by a semicolon."
+            "For one variable histogram, use a comma-separated list of values."
+            "\nFor two variable histograms, separate the two comma-separated "
+            "lists by a semicolon."
         )
 
         build_layout_with_callbacks(
@@ -677,7 +680,8 @@ class HistDialog(PlottingDialog):
             self.redraw_dynamic_plot()
         else:
             self.error(
-                "You cannot make more than two dynamic plots for each plotting widget dialog."
+                "You cannot make more than two dynamic plots "
+                "for each plotting widget dialog."
             )
 
     @typing.override
@@ -1151,7 +1155,8 @@ class ScatterDialog(PlottingDialog):
             self.redraw_dynamic_plot()
         else:
             self.error(
-                "You cannot make more than two dynamic plots for each plotting widget dialog."
+                "You cannot make more than two dynamic plots "
+                "for each plotting widget dialog."
             )
 
     @typing.override
@@ -1886,7 +1891,8 @@ class CatPlotDialog(PlottingDialog):
             self.redraw_dynamic_plot()
         else:
             self.error(
-                "You cannot make more than two dynamic plots for each plotting widget dialog."
+                "You cannot make more than two dynamic plots "
+                "for each plotting widget dialog."
             )
 
     @typing.override
@@ -2144,7 +2150,8 @@ class CountPlotDialog(PlottingDialog):
             self.redraw_dynamic_plot()
         else:
             self.error(
-                "You cannot make more than two dynamic plots for each plotting widget dialog."
+                "You cannot make more than two dynamic plots "
+                "for each plotting widget dialog."
             )
 
     @typing.override
@@ -2342,7 +2349,8 @@ class CorrPlotDialog(PlottingDialog):
             self.redraw_dynamic_plot()
         else:
             self.error(
-                "You cannot make more than two dynamic plots for each plotting widget dialog."
+                "You cannot make more than two dynamic plots "
+                "for each plotting widget dialog."
             )
 
     @typing.override
@@ -2759,7 +2767,8 @@ class LineDialog(PlottingDialog):
             self.redraw_dynamic_plot()
         else:
             self.error(
-                "You cannot make more than two dynamic plots for each plotting widget dialog."
+                "You cannot make more than two dynamic plots "
+                "for each plotting widget dialog."
             )
 
     @typing.override
@@ -2949,7 +2958,8 @@ class LinearRegressionDialog(PlottingDialog):
         self.debug(f"{self.x_columns} {self.y_column}")
         self.debug(f"{self.add_constant} {self.alpha} {self.marker} {self.linestyle}")
         self.debug(
-            f"{self.degree_of_polynomial} {self.add_interactions} {self.add_firstorder_interactions}"
+            f"{self.degree_of_polynomial} {self.add_interactions} "
+            f"{self.add_firstorder_interactions}"
         )
 
         if len(self.x_columns) > 1:
@@ -3006,7 +3016,8 @@ class LinearRegressionDialog(PlottingDialog):
                 ax.set_ylabel(f"{self.y_column}")
                 ax.legend()
                 ax.set_title(
-                    f"{self.y_column} vs {self.x_column}; R^2: {self.regression_results.rsquared:.3f}"
+                    f"{self.y_column} vs {self.x_column}; "
+                    f"R^2: {self.regression_results.rsquared:.3f}"
                 )
                 ax.grid(True)
                 ax.tick_params(
@@ -3034,7 +3045,8 @@ class LinearRegressionDialog(PlottingDialog):
                 ax.set_ylabel("Residuals")
                 ax.legend()
                 ax.set_title(
-                    f"Residuals vs {self.y_column}; R^2: {self.regression_results.rsquared:.3f}"
+                    f"Residuals vs {self.y_column}; "
+                    "R^2: {self.regression_results.rsquared:.3f}"
                 )
                 ax.grid(True)
                 ax.tick_params(
@@ -3066,7 +3078,8 @@ class LinearRegressionDialog(PlottingDialog):
             self.redraw_dynamic_plot()
         else:
             self.error(
-                "You cannot make more than two dynamic plots for each plotting widget dialog."
+                "You cannot make more than two dynamic plots "
+                "for each plotting widget dialog."
             )
 
     @typing.override
@@ -3381,7 +3394,8 @@ class PairGridDialog(PlottingDialog):
             self.redraw_dynamic_plot()
         else:
             self.error(
-                "You cannot make more than two dynamic plots for each plotting widget dialog."
+                "You cannot make more than two dynamic plots "
+                "for each plotting widget dialog."
             )
 
     @typing.override

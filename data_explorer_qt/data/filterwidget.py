@@ -9,7 +9,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
@@ -121,7 +120,8 @@ class FilterWidget(QWidget):
                     self.deleteLater()
                     self.debug(f"Datetime values are of wrong type for column {column}")
                     self.error(
-                        f"Unable to create a filter widget for {column} due to a type issue."
+                        f"Unable to create a filter widget for {column}"
+                        "due to a type issue."
                     )
                     raise InvalidFilterWidgetError()
 
