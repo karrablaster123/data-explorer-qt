@@ -1,7 +1,7 @@
 [General]
 
 window_dimensions = [1280, 800] # W, H
-font = "Recursive Sans"
+font = "PT Root UI VF"
 default_theme = "dark"
 fontsize = 12
 plugins = "__PLUGIN_FOLDER_PATH__" # defaults to _root_folder_/plugins
@@ -30,7 +30,7 @@ QMainWindow = """
 QLabel = """
     QLabel {
         color: #E0E0E0; 
-        font-family: 'Recursive Sans', 'Segoe UI', sans-serif; 
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif; 
     }
 """
 
@@ -43,7 +43,7 @@ QPushButton = """
         border: none;
         padding: 10px 20px;
         border-radius: 5px; 
-        font-family: 'Recursive Sans', 'Segoe UI', sans-serif;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         text-align: center;
     }
 
@@ -497,7 +497,7 @@ FilterWidgetLabel = """
     QLabel#FilterWidgetLabel {
         font-size: 18px;
         font-weight: 600;
-        font-family: 'Recursive Sans', 'Segoe UI', sans-serif; 
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif; 
     }
     QLabel#FilterWidgetLabel[active="true"] {
         background-color: transparent;
@@ -570,7 +570,7 @@ QMainWindow = """
 QLabel = """
     QLabel {
         color: #1A1A1A; 
-        font-family: 'Recursive Sans', 'Segoe UI', sans-serif; 
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif; 
     }
 """
 
@@ -583,7 +583,7 @@ QPushButton = """
         border: none;
         padding: 10px 20px;
         border-radius: 5px; 
-        font-family: 'Recursive Sans', 'Segoe UI', sans-serif;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         text-align: center;
     }
 
@@ -1034,7 +1034,7 @@ FilterWidgetLabel = """
     QLabel#FilterWidgetLabel {
         font-size: 18px;
         font-weight: 600;
-        font-family: 'Recursive Sans', 'Segoe UI', sans-serif; 
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif; 
     }
     QLabel#FilterWidgetLabel[active="true"] {
         background-color: transparent;

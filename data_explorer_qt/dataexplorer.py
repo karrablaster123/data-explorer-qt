@@ -129,7 +129,7 @@ class DataExplorer:
                     self.debug(e)
 
     def load_custom_font(self):
-        path_to_font = Path(__file__).parent / "resources" / "Recursive.ttf"
+        path_to_font = Path(__file__).parent / "resources" / "PTRootUI.ttf"
         if path_to_font.exists():
             path_to_font = str(path_to_font)
             font_id = QFontDatabase.addApplicationFont(path_to_font)
