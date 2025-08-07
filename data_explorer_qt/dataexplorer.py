@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Callable, final
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import QApplication, QWidget
 from qframelesswindow import FramelessWindow
 
@@ -36,6 +37,8 @@ class DataExplorer:
         self._setup_logging()
 
         self.construct_plugin_list()
+
+        self.load_custom_font()
 
         self.gui = DataExplorerGUI(self)
         self.info("GUI Initialised!")
@@ -124,6 +127,17 @@ class DataExplorer:
                 except Exception as e:
                     self.debug(f"Plugin {module_name} not loaded")
                     self.debug(e)
+
+    def load_custom_font(self):
+        path_to_font = Path(__file__).parent / "resources" / "Recursive.ttf"
+        if path_to_font.exists():
+            path_to_font = str(path_to_font)
+            font_id = QFontDatabase.addApplicationFont(path_to_font)
+            if font_id != -1:
+                self.debug(QFontDatabase.applicationFontFamilies(font_id)[0])
+                self.debug("Loaded Custom Font")
+        else:
+            return
 
     def closeEvent(self):
         self.app.quit()

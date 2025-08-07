@@ -69,7 +69,7 @@ class DataExplorerGUI(FramelessMainWindow):
                     "Data.Explorer"
                 )
             )
-        self.setWindowIcon(QIcon(str(Path(__file__).parent / "icon.ico")))
+        self.setWindowIcon(QIcon(str(Path(__file__).parent / "resources" / "icon.ico")))
 
         self.setGeometry(100, 100, *window_dimensions)  # x, y, width, height
 
