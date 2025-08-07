@@ -278,8 +278,9 @@ class Plotter:
             "Diverging Palette", self.diverging_palette_combobox
         )
         sort_categories_combobox = get_label_widget_row_(
-            "Sort Category by: ", self.sort_categories_combobox
+            "Sort Category by", self.sort_categories_combobox
         )
+        filler = QLabel()
         build_grid_layout(
             layout,
             [
@@ -294,7 +295,7 @@ class Plotter:
                 [(y_grid_colour_combobox, 1), (y_grid_alpha_slider, 1)],
                 [qualitative_palette_combobox, circular_palette_combobox],
                 [perceptually_uniform_palette_combobox, diverging_palette_combobox],
-                [sort_categories_combobox],
+                [sort_categories_combobox, filler],
             ],
         )
         layout.addStretch(1)

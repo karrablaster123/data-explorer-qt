@@ -15,8 +15,6 @@ log_format = "%(asctime)s - %(levelname)s - %(message)s"
 
 [Themes]
 
-# --- AI-Generated + Handwritten ---
-
 [Themes.Dark]
 
 [Themes.Dark.PyQt]
@@ -348,6 +346,8 @@ QComboBox = """
         border-radius: 4px;
         background-color: #464646;
         color: #E0E0E0;
+        font-size: 14px;
+        font-weight: 450;
     }
     QComboBox QAbstractItemView {
         border: 1px solid #323232;
@@ -355,6 +355,8 @@ QComboBox = """
         color: #E0E0E0;
         selection-background-color: #5A5A5A;
         selection-color: #FFFFFF;
+        font-size: 14px;
+        font-weight: 450;
     }
 """
 
@@ -363,7 +365,9 @@ QSpinBox = """
         border: 1px solid #323232;
         border-radius: 4px;
         background-color: #464646;
-        color: #E0E0E0;
+        color: #F0F0F0;
+        font-size: 14px;
+        font-weight: 400;
     }
 """
 QDoubleSpinBox = """
@@ -371,7 +375,9 @@ QDoubleSpinBox = """
         border: 1px solid #323232;
         border-radius: 4px;
         background-color: #464646;
-        color: #E0E0E0;
+        color: #F0F0F0;
+        font-size: 14px;
+        font-weight: 400;
     }
 """
 [Themes.Dark.Custom]
@@ -429,7 +435,8 @@ ContentArea = """
         margin-bottom: 10px;
     }
     #ContentArea QLabel { 
-        color: #D0D0D0;
+        color: #F0F0F0;
+        font-weight: 500;
         font-size: 14px;
     }
     #ContentArea QPushButton {
@@ -471,6 +478,8 @@ DataImporter = """
     #DataImporter QComboBox {
         background: #464646;
         color: #E0E0E0;
+        font-size: 14px;
+        font-weight: 450;
     }
 """
 
@@ -513,9 +522,13 @@ LabeledRangeSlider = """
     #LabeledRangeSlider QLineEdit {
         padding: 0px 0px 0px 0px;
         color: #E0E0E0;
+        font-size: 14px;
+        font-weight: 400;
     }
     #LabeledRangeSlider QDoubleSpinBox {
         color: #E0E0E0;
+        font-weight: 400;
+        font-size: 14px;
     }
 """
 
