@@ -11,7 +11,7 @@ import pandas as pd
 from matplotlib.backends.backend_qt import NavigationToolbar2QT
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from PySide6.QtGui import QCloseEvent
+from PySide6.QtGui import QCloseEvent, QIcon
 from PySide6.QtWidgets import QHBoxLayout, QSpacerItem, QTextEdit, QVBoxLayout, QWidget
 from qframelesswindow import FramelessWindow
 from seaborn import FacetGrid, PairGrid
@@ -148,6 +148,7 @@ class EmbeddedDynamicPlot(QWidget):
         self.filter_display.setReadOnly(True)
         self.filter_display.setText(self._generate_filter_text())
         self.dataexplorer.owned_widgets.append(self)
+        self.setWindowIcon(QIcon(self.dataexplorer.icon_path))
 
         self.plot_subwidget = self.dataexplorer.get_widget()
         self.figure = plt.figure()
@@ -227,6 +228,7 @@ class PlottingDialog(FramelessWindow):
         self.debug: Callable[[str], None] = dataexplorer.debug
         self.error: Callable[[str], None] = dataexplorer.error
         self.datastore: "DataStore" = datastore
+        self.setWindowIcon(QIcon(self.dataexplorer.icon_path))
 
         self._generate_plotting_data()
         self.dataexplorer.owned_widgets.append(self)

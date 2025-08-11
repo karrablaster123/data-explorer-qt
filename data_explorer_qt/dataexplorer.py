@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Callable, final
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFontDatabase
+from PySide6.QtGui import QFontDatabase, QIcon
 from PySide6.QtWidgets import QApplication, QWidget
 from qframelesswindow import FramelessWindow
 
@@ -35,6 +35,7 @@ class DataExplorer:
         self.font = self.config["General"]["font"]
         self.font_size = self.config["General"]["fontsize"]
         self._setup_logging()
+        self.icon_path = str(Path(__file__).parent / "resources" / "icon.ico")
 
         self.construct_plugin_list()
 
@@ -149,6 +150,7 @@ class DataExplorer:
             widget.setTitleBar(cust_title)
         else:
             widget = QWidget()
+        widget.setWindowIcon(QIcon(self.icon_path))
         widget.setObjectName("StandardWidget")
         widget.setStyleSheet(self.stylesheet)
         return widget
