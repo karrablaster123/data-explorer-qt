@@ -134,7 +134,6 @@ class EmbeddedDynamicPlot(QWidget):
         parent: "PlottingDialog",
     ):
         super().__init__()
-        top_spacer = QSpacerItem(20, 50)
         self.setWindowTitle(name)
         self.debug = dataexplorer.debug
         self.error = dataexplorer.error
@@ -142,6 +141,7 @@ class EmbeddedDynamicPlot(QWidget):
         self._parent = parent
         self.name = name
         self.resize(1200, 1200)
+        self.setObjectName("DynamicPlot")
         self.setStyleSheet(dataexplorer.stylesheet)
         self.datastore = datastore
         self.filter_display = QTextEdit()
@@ -160,9 +160,7 @@ class EmbeddedDynamicPlot(QWidget):
 
         build_layout(self.plot_vbox, [self.plot_toolbar, self.plot])
 
-        base_layout = QVBoxLayout(self)
-        self._layout = QHBoxLayout()
-        build_layout(base_layout, [top_spacer, self._layout])
+        self._layout = QHBoxLayout(self)
         build_layout(self._layout, [(self.plot_subwidget, 1), self.filter_display])
 
         self.show()

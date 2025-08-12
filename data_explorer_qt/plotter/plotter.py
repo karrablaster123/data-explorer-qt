@@ -382,7 +382,7 @@ class HistDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Histogram")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change
+            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True,
         )
 
         self.hist_column_combobox = self.setup_column_combobox(True)
@@ -739,7 +739,7 @@ class ScatterDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Scatter")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change
+            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
         )
 
         self.x_column_combobox = self.setup_column_combobox(True)
@@ -1255,7 +1255,7 @@ class CatPlotDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Categorical")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change
+            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
         )
 
         self.mode_combobox = QComboBox()
@@ -1941,7 +1941,7 @@ class CountPlotDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Count")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change
+            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
         )
 
         self.categorical_column_combobox = self.setup_column_combobox(True)
@@ -2190,7 +2190,7 @@ class CorrPlotDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Correlation Matrix")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change
+            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
         )
 
         self.variable_columns_combobox = self.setup_column_combobox()
@@ -2408,7 +2408,7 @@ class LineDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Line")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change
+            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
         )
 
         self.x_column_combobox = self.setup_column_combobox(True)
@@ -2822,7 +2822,7 @@ class LinearRegressionDialog(PlottingDialog):
         self.resize(800, 800)
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change
+            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
         )
 
         top_spacer = QSpacerItem(20, 30)
@@ -3135,10 +3135,9 @@ class PairGridDialog(PlottingDialog):
 
     def __init__(self, dataexplorer: "DataExplorer", datastore: "DataStore"):
         super().__init__(dataexplorer, datastore, "Pair Grid Plotting Dialog")
-        self.resize(800, 800)
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change
+            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
         )
         self.variable_columns_combobox = self.setup_column_combobox(True, True)
         variable_columns_combobox = get_label_widget_row_(

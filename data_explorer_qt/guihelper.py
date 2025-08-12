@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from qframelesswindow import StandardTitleBar
-from superqt import QLabeledDoubleRangeSlider, QLabeledDoubleSlider
+from superqt import QElidingLabel, QLabeledDoubleRangeSlider, QLabeledDoubleSlider
 
 widget_types = QLayout | QSlider | QWidget | QFrame | QSpacerItem
 
@@ -76,9 +76,13 @@ def get_dynamic_scroll_area(
 
 
 def get_label_widget_row(
-    label: str, widget: QWidget, setStretch: bool = False
+    label: str, widget: QWidget, setStretch: bool = False,
+    useEliding: bool = False,
 ) -> QHBoxLayout:
-    qlabel = QLabel(label)
+    if useEliding:
+        qlabel = QElidingLabel(label)
+    else:
+        qlabel = QLabel(label)
     layout = QHBoxLayout()
     if setStretch:
         build_layout(layout, [(qlabel, 1), (widget, 1)])
@@ -88,10 +92,11 @@ def get_label_widget_row(
 
 
 def get_label_widget_row_callback(
-    label: str, widget: QWidget, callback: Callable[[], None], setStretch: bool = False
+    label: str, widget: QWidget, callback: Callable[[], None], setStretch: bool = False,
+    useEliding: bool = False,
 ) -> QHBoxLayout:
     add_callback_to_standard_signal([widget], callback)
-    return get_label_widget_row(label, widget, setStretch)
+    return get_label_widget_row(label, widget, setStretch, useEliding)
 
 
 def build_layout_with_callbacks(
