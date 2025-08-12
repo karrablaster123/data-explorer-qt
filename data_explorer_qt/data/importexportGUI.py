@@ -198,7 +198,7 @@ class DataImporter:
                 dtype_grid.addLayout(hbox, self._row(i), self._col(i))
                 self.debug(
                     f'Dtype, Row, Col: "{widg.currentText()}", '
-                    f'{self._row(i)}, {self._col(i)}'
+                    f"{self._row(i)}, {self._col(i)}"
                 )
             except TypeError as e:
                 self.error(f"Error reading column {column}: {e}")
@@ -284,7 +284,7 @@ class DataImporter:
                 nan_grid.addLayout(hbox, self._row(i), self._col(i))
                 self.debug(
                     f'NaN, Row, Col: "{widg.currentText()}", '
-                    f'{self._row(i)}, {self._col(i)}'
+                    f"{self._row(i)}, {self._col(i)}"
                 )
             except TypeError as e:
                 self.error(f"Error reading column {column}: {e}")

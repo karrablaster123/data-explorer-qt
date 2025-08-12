@@ -76,7 +76,9 @@ def get_dynamic_scroll_area(
 
 
 def get_label_widget_row(
-    label: str, widget: QWidget, setStretch: bool = False,
+    label: str,
+    widget: QWidget,
+    setStretch: bool = False,
     useEliding: bool = False,
 ) -> QHBoxLayout:
     if useEliding:
@@ -92,7 +94,10 @@ def get_label_widget_row(
 
 
 def get_label_widget_row_callback(
-    label: str, widget: QWidget, callback: Callable[[], None], setStretch: bool = False,
+    label: str,
+    widget: QWidget,
+    callback: Callable[[], None],
+    setStretch: bool = False,
     useEliding: bool = False,
 ) -> QHBoxLayout:
     add_callback_to_standard_signal([widget], callback)
@@ -212,6 +217,9 @@ class MultiSelectComboBox(QComboBox):
         )
         self.lineEdit().setPalette(palette)
 
+        self.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
         self.setItemDelegate(MultiSelectComboBox.Delegate())
         self.setOutputType("data")
         self.setDisplayType("data")
@@ -469,7 +477,7 @@ class MultiSelectComboBox(QComboBox):
         """Get the currently selected options along with their associated data.
 
         Returns:
-            list: A list of tuples containing the text and data 
+            list: A list of tuples containing the text and data
             of the currently selected options.
                 Each tuple consists of (text, data).
         """

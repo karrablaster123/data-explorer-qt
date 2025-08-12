@@ -12,12 +12,12 @@ from matplotlib.backends.backend_qt import NavigationToolbar2QT
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PySide6.QtGui import QCloseEvent, QIcon
-from PySide6.QtWidgets import QHBoxLayout, QSpacerItem, QTextEdit, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QComboBox, QHBoxLayout, QTextEdit, QVBoxLayout, QWidget
 from qframelesswindow import FramelessWindow
 from seaborn import FacetGrid, PairGrid
 
 from ..data.dataenums import NumericConversion
-from ..guihelper import CustomTitleBar, build_layout
+from ..guihelper import CustomTitleBar, MultiSelectComboBox, build_layout
 
 if typing.TYPE_CHECKING:
     from ..data.datamodel import DataStore
@@ -233,6 +233,21 @@ class PlottingDialog(FramelessWindow):
         self._layout: QVBoxLayout = QVBoxLayout(self)
         self.setStyleSheet(dataexplorer.stylesheet)
         self.resize(600, 800)
+
+    def setup_column_combobox(self, mandatory: bool, multi_variable: bool = False):
+        if multi_variable:
+            box = MultiSelectComboBox()
+        else:
+            box = QComboBox()
+            box.setSizeAdjustPolicy(
+                QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+            )
+        if mandatory:
+            box.addItems(self.datastore.columns)
+        else:
+            box.addItem("")
+            box.addItems(self.datastore.columns)
+        return box
 
     def cat_name(self, col_name: str):
         return col_name + "_categorical_"

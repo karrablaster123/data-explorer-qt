@@ -36,7 +36,6 @@ from statsmodels.regression.linear_model import RegressionResultsWrapper
 from superqt import QCollapsible, QLabeledDoubleSlider
 
 from ..guihelper import (
-    MultiSelectComboBox,
     build_grid_layout,
     build_layout_with_callbacks,
     get_label_widget_row_callback,
@@ -382,7 +381,9 @@ class HistDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Histogram")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True,
+            get_label_widget_row_callback,
+            callback=self.on_widget_change,
+            useEliding=True,
         )
 
         self.hist_column_combobox = self.setup_column_combobox(True)
@@ -519,15 +520,6 @@ class HistDialog(PlottingDialog):
             self.on_widget_change,
         )
         self.show()
-
-    def setup_column_combobox(self, mandatory: bool):
-        box = QComboBox()
-        if mandatory:
-            box.addItems(self.datastore.columns)
-        else:
-            box.addItem("")
-            box.addItems(self.datastore.columns)
-        return box
 
     @typing.override
     def on_plot(self):
@@ -739,7 +731,9 @@ class ScatterDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Scatter")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
+            get_label_widget_row_callback,
+            callback=self.on_widget_change,
+            useEliding=True,
         )
 
         self.x_column_combobox = self.setup_column_combobox(True)
@@ -854,18 +848,6 @@ class ScatterDialog(PlottingDialog):
             self.on_widget_change,
         )
         self.show()
-
-    def setup_column_combobox(self, mandatory: bool, multi_variable: bool = False):
-        if multi_variable:
-            box = MultiSelectComboBox()
-        else:
-            box = QComboBox()
-        if mandatory:
-            box.addItems(self.datastore.columns)
-        else:
-            box.addItem("")
-            box.addItems(self.datastore.columns)
-        return box
 
     @typing.override
     def on_plot(self):
@@ -1255,7 +1237,9 @@ class CatPlotDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Categorical")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
+            get_label_widget_row_callback,
+            callback=self.on_widget_change,
+            useEliding=True,
         )
 
         self.mode_combobox = QComboBox()
@@ -1755,15 +1739,6 @@ class CatPlotDialog(PlottingDialog):
         self.kwargs["size"] = self.swarm_size_spinbox.value()
         self.kwargs["alpha"] = self.swarm_alpha_slider.value()
 
-    def setup_column_combobox(self, mandatory: bool):
-        box = QComboBox()
-        if mandatory:
-            box.addItems(self.datastore.columns)
-        else:
-            box.addItem("")
-            box.addItems(self.datastore.columns)
-        return box
-
     def set_active_settings(self):
         mode_string = self.mode_combobox.currentText()
         for widg in self.settings_widgets.values():
@@ -1941,7 +1916,9 @@ class CountPlotDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Count")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
+            get_label_widget_row_callback,
+            callback=self.on_widget_change,
+            useEliding=True,
         )
 
         self.categorical_column_combobox = self.setup_column_combobox(True)
@@ -2044,15 +2021,6 @@ class CountPlotDialog(PlottingDialog):
             self.on_widget_change,
         )
         self.show()
-
-    def setup_column_combobox(self, mandatory: bool):
-        box = QComboBox()
-        if mandatory:
-            box.addItems(self.datastore.columns)
-        else:
-            box.addItem("")
-            box.addItems(self.datastore.columns)
-        return box
 
     @typing.override
     def on_plot(self):
@@ -2190,14 +2158,16 @@ class CorrPlotDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Correlation Matrix")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
+            get_label_widget_row_callback,
+            callback=self.on_widget_change,
+            useEliding=True,
         )
 
-        self.variable_columns_combobox = self.setup_column_combobox()
+        self.variable_columns_combobox = self.setup_column_combobox(True, True)
         variable_columns_combobox = get_label_widget_row_(
             "Variables", self.variable_columns_combobox
         )
-        self.y_columns_combobox = self.setup_column_combobox()
+        self.y_columns_combobox = self.setup_column_combobox(True, True)
         self.y_columns_combobox.setToolTip(
             "Optional: select variables here if you do not want a square heatmap."
         )
@@ -2267,11 +2237,6 @@ class CorrPlotDialog(PlottingDialog):
 
     def toggle_vmax(self):
         self.vmax_spinbox.setEnabled(not self.vmax_spinbox.isEnabled())
-
-    def setup_column_combobox(self):
-        box = MultiSelectComboBox()
-        box.addItems(self.datastore.numeric_columns + self.datastore.datetime_columns)
-        return box
 
     @typing.override
     def on_plot(self):
@@ -2408,7 +2373,9 @@ class LineDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Line")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
+            get_label_widget_row_callback,
+            callback=self.on_widget_change,
+            useEliding=True,
         )
 
         self.x_column_combobox = self.setup_column_combobox(True)
@@ -2515,18 +2482,6 @@ class LineDialog(PlottingDialog):
             self.on_widget_change,
         )
         self.show()
-
-    def setup_column_combobox(self, mandatory: bool, multi_variable: bool = False):
-        if multi_variable:
-            box = MultiSelectComboBox()
-        else:
-            box = QComboBox()
-        if mandatory:
-            box.addItems(self.datastore.columns)
-        else:
-            box.addItem("")
-            box.addItems(self.datastore.columns)
-        return box
 
     @typing.override
     def on_plot(self):
@@ -2822,7 +2777,9 @@ class LinearRegressionDialog(PlottingDialog):
         self.resize(800, 800)
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
+            get_label_widget_row_callback,
+            callback=self.on_widget_change,
+            useEliding=True,
         )
 
         top_spacer = QSpacerItem(20, 30)
@@ -2922,18 +2879,6 @@ class LinearRegressionDialog(PlottingDialog):
             self.on_widget_change,
         )
         self.show()
-
-    def setup_column_combobox(self, mandatory: bool, multi_variable: bool = False):
-        if multi_variable:
-            box = MultiSelectComboBox()
-        else:
-            box = QComboBox()
-        if mandatory:
-            box.addItems(self.datastore.columns)
-        else:
-            box.addItem("")
-            box.addItems(self.datastore.columns)
-        return box
 
     @typing.override
     def on_plot(self):
@@ -3137,7 +3082,9 @@ class PairGridDialog(PlottingDialog):
         super().__init__(dataexplorer, datastore, "Pair Grid Plotting Dialog")
 
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=self.on_widget_change, useEliding=True
+            get_label_widget_row_callback,
+            callback=self.on_widget_change,
+            useEliding=True,
         )
         self.variable_columns_combobox = self.setup_column_combobox(True, True)
         variable_columns_combobox = get_label_widget_row_(
@@ -3258,18 +3205,6 @@ class PairGridDialog(PlottingDialog):
             ],
         )
         self.show()
-
-    def setup_column_combobox(self, mandatory: bool, multi_variable: bool = False):
-        if multi_variable:
-            box = MultiSelectComboBox()
-        else:
-            box = QComboBox()
-        if mandatory:
-            box.addItems(self.datastore.columns)
-        else:
-            box.addItem("")
-            box.addItems(self.datastore.columns)
-        return box
 
     def get_plot_combobox(self) -> QComboBox:
         combobox = QComboBox()
