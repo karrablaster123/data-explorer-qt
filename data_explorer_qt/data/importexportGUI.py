@@ -26,6 +26,7 @@ from ..guihelper import build_layout, get_dynamic_scroll_area, get_label_widget_
 from .dataenums import (
     EXPORT_FILE_TYPES,
     IMPORT_FILE_TYPES,
+    IMPORT_FILE_TYPES_LIST,
     NAN_CAT,
     NAN_DATETIME,
     NAN_NUM,
@@ -49,26 +50,33 @@ if typing.TYPE_CHECKING:
 class DataImporter:
     data: pd.DataFrame
 
-    def __init__(self, dataexplorer: "DataExplorer"):
+    def __init__(self, dataexplorer: "DataExplorer",
+                 file_path: str=""):
         self.dataexplorer: "DataExplorer" = dataexplorer
         self.datamodel: DataModel = dataexplorer.datamodel
         self.error = dataexplorer.error
         self.debug = dataexplorer.debug
 
-        file_types: list[str] = IMPORT_FILE_TYPES
-        file_path: str
         filetype: str
-        file_path, filetype = QFileDialog.getOpenFileName(
-            parent=None,
-            caption="Open Data File",
-            filter=";;".join(file_types),
-        )
+        if file_path == "":
+            file_path, _ = QFileDialog.getOpenFileName(
+                parent=None,
+                caption="Open Data File",
+                filter=";;".join(IMPORT_FILE_TYPES),
+            )
+        else:
+            filetype = Path(file_path).suffix
+            self.debug(filetype)
+            if filetype not in "".join(IMPORT_FILE_TYPES_LIST):
+                self.error("Wrong file type")
+                return
         if not file_path:
             self.error("Empty File Path.")
             return
 
         self.dataexplorer.info(f"File Selected: {file_path}")
         self.file_name: str = Path(file_path).stem
+        filetype = Path(file_path).suffix
         self._read_file(file_path, filetype)
 
     def _validate_import(self):
@@ -343,7 +351,7 @@ class DataImporter:
         return widget
 
     def _read_file(self, file_path: str, filetype: str):
-        if filetype.startswith("Excel"):
+        if filetype in IMPORT_FILE_TYPES_LIST[0:3]:
             excel_file = pd.ExcelFile(file_path)
             if len(excel_file.sheet_names) > 1:
                 self.select_worksheet_widget = self._create_widget(200, 300)
@@ -361,13 +369,13 @@ class DataImporter:
             else:
                 self.data = pd.read_excel(file_path, engine="calamine")
                 self._validate_import()
-        elif filetype.startswith("CSV"):
+        elif filetype == IMPORT_FILE_TYPES_LIST[3]:
             self.data = pd.read_csv(file_path)
             self._validate_import()
-        elif filetype.startswith("Parquet"):
+        elif filetype == IMPORT_FILE_TYPES_LIST[4]:
             self.data = pd.read_parquet(file_path)
             self._validate_import()
-        elif filetype.startswith("Feather"):
+        elif filetype == IMPORT_FILE_TYPES_LIST[5]:
             self.data = pd.read_feather(file_path)
             self._validate_import()
         else:

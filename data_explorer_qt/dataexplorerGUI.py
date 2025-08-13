@@ -10,7 +10,7 @@ from typing import final
 
 import pandas as pd
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QCloseEvent, QFont, QIcon
+from PySide6.QtGui import QCloseEvent, QDragEnterEvent, QDropEvent, QFont, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -291,7 +291,27 @@ class DataExplorerGUI(FramelessMainWindow):
 
         build_layout(manage_data_page_layout, widg_list)
         manage_data_page_layout.addStretch()
+        manage_data_page.setAcceptDrops(True)
+        manage_data_page.dragEnterEvent = self.manage_data_dragEnterEvent
+        manage_data_page.dropEvent = self.manage_data_dropEvent
         return manage_data_page
+    
+    def manage_data_dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def manage_data_dropEvent(self, event: QDropEvent):
+        if event.mimeData().hasUrls():
+            file_path = event.mimeData().urls()[0].toLocalFile()
+            event.accept()
+            if Path(file_path).exists():
+                self._importer = DataImporter(self.dataexplorer, file_path)
+            else:
+                self.error("That file did not work! It does not exist.")
+        else:
+            event.ignore()
 
     def _view_data(self):
         datamodel: DataModel = self.dataexplorer.datamodel
