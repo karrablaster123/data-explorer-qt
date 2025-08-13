@@ -50,8 +50,7 @@ if typing.TYPE_CHECKING:
 class DataImporter:
     data: pd.DataFrame
 
-    def __init__(self, dataexplorer: "DataExplorer",
-                 file_path: str=""):
+    def __init__(self, dataexplorer: "DataExplorer", file_path: str = ""):
         self.dataexplorer: "DataExplorer" = dataexplorer
         self.datamodel: DataModel = dataexplorer.datamodel
         self.error = dataexplorer.error

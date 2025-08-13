@@ -8,12 +8,7 @@ IMPORT_FILE_TYPES = [
     "Feather (*.feather)",
 ]
 
-IMPORT_FILE_TYPES_LIST = [".xlsx",
-                          ".xls",
-                          ".xlsm",
-                          ".csv",
-                          ".parquet",
-                          ".feather"]
+IMPORT_FILE_TYPES_LIST = [".xlsx", ".xls", ".xlsm", ".csv", ".parquet", ".feather"]
 
 EXPORT_FILE_TYPES = [
     "Excel File (*.xlsx)",

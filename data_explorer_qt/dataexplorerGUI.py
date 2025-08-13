@@ -295,7 +295,7 @@ class DataExplorerGUI(FramelessMainWindow):
         manage_data_page.dragEnterEvent = self.manage_data_dragEnterEvent
         manage_data_page.dropEvent = self.manage_data_dropEvent
         return manage_data_page
-    
+
     def manage_data_dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
             event.accept()
