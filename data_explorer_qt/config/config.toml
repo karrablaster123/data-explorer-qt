@@ -29,6 +29,8 @@ QLabel = """
     QLabel {
         color: #E0E0E0; 
         font-family: 'PT Root UI VF', 'Segoe UI', sans-serif; 
+        font-size: 14px;
+        font-weight: 400;
     }
 """
 
@@ -36,12 +38,12 @@ QPushButton = """
     QPushButton {
         background-color: #007ACC; 
         color: white;
-        font-size: 14px;
-        font-weight: 600;
         border: none;
         padding: 10px 20px;
         border-radius: 5px; 
         font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
         text-align: center;
     }
 
@@ -122,7 +124,7 @@ QStatusBar = """
         background-color: #333333; 
         color: #f0f0f0; 
         border-top: 1px solid #5a5a5a; 
-        font-size: 9pt;
+        font-size: 10px;
         padding: 2px;
     }   
 """
@@ -234,6 +236,8 @@ QCheckBox = """
     QCheckBox {
         color: #E0E0E0; 
         font-size: 14px;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
+        font-weight: 400;
         spacing: 6px; 
         padding: 3px;
     }
@@ -398,6 +402,7 @@ Sidebar = """
     #Sidebar #SidebarTitle { 
         color: #E0E0E0; 
         padding: 15px 10px;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 16px;
         font-weight: 600;
     }
@@ -407,6 +412,7 @@ Sidebar = """
         border: none; 
         padding: 12px 15px;
         text-align: left;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 14px;
         font-weight: 500;
     }
@@ -438,20 +444,23 @@ ContentArea = """
     }
     #ContentArea QLabel#PageTitle { 
         color: #E0E0E0;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 24px;
         font-weight: 600;
         margin-bottom: 10px;
     }
     #ContentArea QLabel { 
         color: #F0F0F0;
-        font-weight: 500;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 14px;
+        font-weight: 400;
     }
     #ContentArea QPushButton {
         background-color: #00A0B0; 
         color: #FFFFFF;
         border: none;
         padding: 10px 20px;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 14px;
         font-weight: 600;
         border-radius: 5px; 
@@ -486,6 +495,7 @@ DataImporter = """
     #DataImporter QComboBox {
         background: #464646;
         color: #E0E0E0;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 14px;
         font-weight: 450;
     }
@@ -498,6 +508,8 @@ DeleteFilter = """
         border: 1px solid #CC0000; 
         padding: 8px 15px;        
         border-radius: 5px;       
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
+        font-size: 14px;
         font-weight: 600;        
     }
     QPushButton#DeleteFilter:hover {
@@ -512,9 +524,9 @@ DeleteFilter = """
 
 FilterWidgetLabel = """
     QLabel#FilterWidgetLabel {
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif; 
         font-size: 18px;
         font-weight: 600;
-        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif; 
     }
     QLabel#FilterWidgetLabel[active="true"] {
         background-color: transparent;
@@ -530,13 +542,15 @@ LabeledRangeSlider = """
     #LabeledRangeSlider QLineEdit {
         padding: 0px 0px 0px 0px;
         color: #E0E0E0;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 14px;
         font-weight: 400;
     }
     #LabeledRangeSlider QDoubleSpinBox {
         color: #E0E0E0;
-        font-weight: 400;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 14px;
+        font-weight: 400;
     }
 """
 
@@ -566,8 +580,8 @@ ScrollArea = """
 RegressionResults = """
     QTextEdit#RegressionResults {
         font-family: "Consolas", monospace;
-        font-size: 10pt;
-        font-weight: 600;
+        font-size: 12px;
+        font-weight: 400;
         color: #f0f0f0;
         background-color: #2b2b2b;
     }
@@ -609,12 +623,12 @@ QPushButton = """
     QPushButton {
         background-color: #007ACC; 
         color: white;
-        font-size: 14px;
-        font-weight: 600;
         border: none;
         padding: 10px 20px;
         border-radius: 5px; 
         font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
         text-align: center;
     }
 
@@ -695,7 +709,7 @@ QStatusBar = """
         background-color: #F0F0F0; 
         color: #1a1a1a; 
         border-top: 1px solid #AAAAAA; 
-        font-size: 9pt;
+        font-size: 10px;
         padding: 2px;
     }   
 """
@@ -807,7 +821,9 @@ QListWidget = """
 QCheckBox = """
     QCheckBox {
         color: #1a1a1a; 
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 14px;
+        font-weight: 600;
         spacing: 6px; 
         padding: 3px;
     }
@@ -951,6 +967,7 @@ Sidebar = """
     #Sidebar #SidebarTitle {
         color: #1A1A1A; 
         padding: 15px 10px;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 16px;
         font-weight: 600;
     }
@@ -960,6 +977,7 @@ Sidebar = """
         border: none;
         padding: 12px 15px;
         text-align: left;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 14px;
         font-weight: 500;
     }
@@ -992,13 +1010,16 @@ ContentArea = """
     }
     #ContentArea QLabel#PageTitle {
         color: #1A1A1A;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 24px;
         font-weight: 600;
         margin-bottom: 10px;
     }
     #ContentArea QLabel {
         color: #2A2A2A;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
         font-size: 14px;
+        font-weight: 400;
     }
     #ContentArea QPushButton {
         background-color: #007ACC; 
@@ -1063,9 +1084,9 @@ DeleteFilter = """
 
 FilterWidgetLabel = """
     QLabel#FilterWidgetLabel {
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif; 
         font-size: 18px;
         font-weight: 600;
-        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif; 
     }
     QLabel#FilterWidgetLabel[active="true"] {
         background-color: transparent;
@@ -1081,9 +1102,15 @@ LabeledRangeSlider = """
     #LabeledRangeSlider QLineEdit {
         padding: 0px 0px 0px 0px;
         color: #1a1a1a;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
     }
     #LabeledRangeSlider QDoubleSpinBox {
         color: #1a1a1a;
+        font-family: 'PT Root UI VF', 'Segoe UI', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
     }
 """
 
@@ -1113,8 +1140,8 @@ ScrollArea = """
 RegressionResults = """
     QTextEdit#RegressionResults {
         font-family: "Consolas", monospace;
-        font-size: 10pt;
-        font-weight: 600;
+        font-size: 12px;
+        font-weight: 400;
         color: #1a1a1a;
         background-color: #f0f0f0;
     }

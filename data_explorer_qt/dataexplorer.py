@@ -16,7 +16,7 @@ from qframelesswindow import FramelessWindow
 from data_explorer_qt.guihelper import CustomTitleBar
 
 from . import setqtapi  # noqa
-from .config.readconfig import CONFIG
+from .config import CONFIG
 from .data.datamodel import DataModel
 from .dataexplorerGUI import DataExplorerGUI
 from .plotter.plotter import Plotter
