@@ -218,7 +218,7 @@ class Plotter:
         layout.setSpacing(5)
         callback = self.on_settings_change_callback
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=callback
+            get_label_widget_row_callback, callback=callback,
         )
 
         title = QLabel("Plot Defaults")
@@ -383,6 +383,7 @@ class HistDialog(PlottingDialog):
         get_label_widget_row_ = partial(
             get_label_widget_row_callback,
             callback=self.on_widget_change,
+            setStretch=True,
             useEliding=True,
         )
 
@@ -733,6 +734,7 @@ class ScatterDialog(PlottingDialog):
         get_label_widget_row_ = partial(
             get_label_widget_row_callback,
             callback=self.on_widget_change,
+            setStretch=True,
             useEliding=True,
         )
 
@@ -1239,6 +1241,7 @@ class CatPlotDialog(PlottingDialog):
         get_label_widget_row_ = partial(
             get_label_widget_row_callback,
             callback=self.on_widget_change,
+            setStretch=True,
             useEliding=True,
         )
 
@@ -1918,6 +1921,7 @@ class CountPlotDialog(PlottingDialog):
         get_label_widget_row_ = partial(
             get_label_widget_row_callback,
             callback=self.on_widget_change,
+            setStretch=True,
             useEliding=True,
         )
 
@@ -2160,6 +2164,7 @@ class CorrPlotDialog(PlottingDialog):
         get_label_widget_row_ = partial(
             get_label_widget_row_callback,
             callback=self.on_widget_change,
+            setStretch=True,
             useEliding=True,
         )
 
@@ -2375,6 +2380,7 @@ class LineDialog(PlottingDialog):
         get_label_widget_row_ = partial(
             get_label_widget_row_callback,
             callback=self.on_widget_change,
+            setStretch=True,
             useEliding=True,
         )
 
@@ -2779,10 +2785,11 @@ class LinearRegressionDialog(PlottingDialog):
         get_label_widget_row_ = partial(
             get_label_widget_row_callback,
             callback=self.on_widget_change,
+            setStretch=True,
             useEliding=True,
         )
 
-        top_spacer = QSpacerItem(20, 30)
+        top_spacer = QSpacerItem(20, 50)
         self.x_columns_combobox = self.setup_column_combobox(True, True)
         x_columns_combobox = get_label_widget_row_(
             "X Axis Variable", self.x_columns_combobox
@@ -2811,7 +2818,7 @@ class LinearRegressionDialog(PlottingDialog):
             "Only add first-order interaction variables"
         )
 
-        mid_spacer = QSpacerItem(20, 100)
+        mid_spacer = QSpacerItem(20, 30)
 
         collapsible = QCollapsible("Additional Settings")
         collapsible_widget = self.dataexplorer.get_widget()
@@ -3084,6 +3091,7 @@ class PairGridDialog(PlottingDialog):
         get_label_widget_row_ = partial(
             get_label_widget_row_callback,
             callback=self.on_widget_change,
+            setStretch=True,
             useEliding=True,
         )
         self.variable_columns_combobox = self.setup_column_combobox(True, True)
