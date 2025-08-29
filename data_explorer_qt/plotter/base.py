@@ -16,7 +16,7 @@ from PySide6.QtWidgets import QComboBox, QHBoxLayout, QTextEdit, QVBoxLayout, QW
 from qframelesswindow import FramelessWindow
 from seaborn import FacetGrid, PairGrid
 
-from ..data.dataenums import NumericConversion
+from ..data.base import NumericConversion
 from ..guihelper import CustomTitleBar, MultiSelectComboBox, build_layout
 
 if typing.TYPE_CHECKING:

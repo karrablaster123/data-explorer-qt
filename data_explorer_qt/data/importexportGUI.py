@@ -23,7 +23,7 @@ from PySide6.QtWidgets import (
 )
 
 from ..guihelper import build_layout, get_dynamic_scroll_area, get_label_widget_row
-from .dataenums import (
+from .base import (
     EXPORT_FILE_TYPES,
     IMPORT_FILE_TYPES,
     IMPORT_FILE_TYPES_LIST,

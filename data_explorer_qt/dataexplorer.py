@@ -32,8 +32,6 @@ class DataExplorer:
     def __init__(self, app: QApplication, debug_mode: bool):
         self.app = app
         self.debug_mode = debug_mode
-        self.font = self.config["General"]["font"]
-        self.font_size = self.config["General"]["fontsize"]
         self._setup_logging()
         self.icon_path = str(Path(__file__).parent / "resources" / "icon.ico")
 

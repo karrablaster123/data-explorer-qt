@@ -77,9 +77,6 @@ class DataExplorerGUI(FramelessMainWindow):
         self.current_theme_index = self._get_current_theme_index()
         self.debug(self.current_theme)
 
-        # Doesn't really do anything. Most fonts are set by QSS
-        QApplication.setFont(QFont(self.dataexplorer.font, self.dataexplorer.font_size))
-
         self.central_widget = self.dataexplorer.get_widget()
         self.setCentralWidget(self.central_widget)
         self.main_layout = QHBoxLayout(self.central_widget)

@@ -40,7 +40,7 @@ from ..guihelper import (
     build_layout_with_callbacks,
     get_label_widget_row_callback,
 )
-from .foundation import (
+from .base import (
     COLOR_PALETTES,
     CORREL_STATISTICS,
     COUNT_PLOT_STATISTICS,
@@ -218,7 +218,8 @@ class Plotter:
         layout.setSpacing(5)
         callback = self.on_settings_change_callback
         get_label_widget_row_ = partial(
-            get_label_widget_row_callback, callback=callback,
+            get_label_widget_row_callback,
+            callback=callback,
         )
 
         title = QLabel("Plot Defaults")

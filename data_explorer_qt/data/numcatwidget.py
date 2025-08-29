@@ -18,7 +18,7 @@ if typing.TYPE_CHECKING:
     from ..dataexplorer import DataExplorer
     from .datamodel import DataStore
 
-from .dataenums import NUM_TO_CAT_OPS, NumericConversion, NumericConverter
+from .base import NUM_TO_CAT_OPS, NumericConversion, NumericConverter
 
 
 @typing.final

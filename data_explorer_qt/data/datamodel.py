@@ -20,7 +20,7 @@ if typing.TYPE_CHECKING:
     from ..dataexplorer import DataExplorer
 
 from ..guihelper import build_layout, get_dynamic_scroll_area
-from .dataenums import Dtype, DtypeOperation, NaNOperation, NumericConverter
+from .base import Dtype, DtypeOperation, NaNOperation, NumericConverter
 from .filterwidget import FilterStore, FilterWidget, InvalidFilterWidgetError
 from .numcatwidget import NumCatWidget
 

@@ -19,7 +19,7 @@ from ..guihelper import MultiSelectComboBox, build_layout
 if typing.TYPE_CHECKING:
     from ..dataexplorer import DataExplorer
     from .datamodel import DataStore
-from .dataenums import Dtype
+from .base import Dtype
 
 
 @dataclass
