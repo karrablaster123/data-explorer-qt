@@ -11,7 +11,7 @@ class TableViewer:
         self.table_viewer.setObjectName("TableViewer")
         self.table_viewer.setWindowTitle(f"Table Viewer: {name}")
         self.table_viewer.setGeometry(100, 100, 800, 400)
-        self.table_viewer.setFont(QFont(dataexplorer.font, dataexplorer.font_size))
+        # self.table_viewer.setFont(QFont(dataexplorer.font, dataexplorer.font_size))
         self.table_view = QTableView()
         self.model = TableViewModel(data)
         self.table_view.setModel(self.model)
