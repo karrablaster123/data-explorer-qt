@@ -245,7 +245,7 @@ class Plotter:
             "Legend Title Size", self.legend_title_size_spinbox
         )
         legend_label_size_spinbox = get_label_widget_row_(
-            "X-Axis Tick Size", self.legend_label_size_spinbox
+            "Legend Label Size", self.legend_label_size_spinbox
         )
         x_tick_rotation_spinbox = get_label_widget_row_(
             "X-Axis Tick Rotation", self.x_tick_rotation_spinbox
