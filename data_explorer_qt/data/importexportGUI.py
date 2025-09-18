@@ -345,7 +345,6 @@ class DataImporter:
         widget.setObjectName("DataImporter")
         widget.setWindowTitle("Data Importer")
         widget.resize(w, h)
-        # widget.setFont(QFont(self.dataexplorer.font, self.dataexplorer.font_size))
         self.dataexplorer.owned_widgets.append(widget)
         return widget
 

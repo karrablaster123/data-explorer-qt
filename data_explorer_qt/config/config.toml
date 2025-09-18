@@ -4,7 +4,7 @@ window_dimensions = [1280, 800] # W, H
 ui_font = "PT Root UI VF"
 monospace_font = "Consolas"
 default_theme = "dark"
-font_scale = 1.0
+font_scale = 1.5
 font_weight_scale = 1.0
 plugins = "__PLUGIN_FOLDER_PATH__" # defaults to _root_folder_/plugins
 
